@@ -18,10 +18,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.lorenzo.mobilecomputinghw.data.entity.Category
-import com.lorenzo.mobilecomputinghw.ui.home.categoryPayment.CategoryPayment
 import com.google.accompanist.insets.systemBarsPadding
 import com.lorenzo.mobilecomputinghw.R
+import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.data.entity.User
+import com.lorenzo.mobilecomputinghw.ui.home.categoryPayment.CategoryReminder
 
 @Composable
 fun Home(
@@ -31,27 +32,29 @@ fun Home(
 ) {
     val viewState by viewModel.state.collectAsState()
 
-    val selectedCategory = viewState.selectedCategory
+    //val selectedCategory = viewState.selectedCategory
 
-    if (viewState.categories.isNotEmpty() && selectedCategory != null) {
+    //if (viewState.categories.isNotEmpty() && selectedCategory != null) {
         Surface(modifier = Modifier.fillMaxSize()) {
             HomeContent(
-                selectedCategory = selectedCategory,
-                categories = viewState.categories,
-                onCategorySelected = viewModel::onCategorySelected,
+                //selectedCategory = selectedCategory,
+                //categories = viewState.categories,
+                //onCategorySelected = viewModel::onCategorySelected,
+                reminders = viewState.reminders,
                 navController = navController,
                 userLogged = userLogged
             )
         }
-    }
+    //}
 }
 
 
 @Composable
 fun HomeContent(
-    selectedCategory: Category,
-    categories: List<Category>,
-    onCategorySelected: (Category) -> Unit,
+    //selectedCategory: Category,
+    //categories: List<Category>,
+    //onCategorySelected: (Category) -> Unit,
+    reminders: List<Reminder>,
     navController: NavController,
     userLogged: String?
 ) {
@@ -59,7 +62,7 @@ fun HomeContent(
         modifier = Modifier.padding(bottom = 24.dp),
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(route = "payment") },
+                onClick = { navController.navigate(route = "reminder") },
                 contentColor = Color.White,
                 modifier = Modifier.padding(all = 20.dp)
             ) {
@@ -87,11 +90,12 @@ fun HomeContent(
                 categories = categories,
                 selectedCategory = selectedCategory,
                 onCategorySelected = onCategorySelected,
-            )*/
-
-            CategoryPayment(
+            )
+            */
+            CategoryReminder(
+                viewModel(),
                 modifier = Modifier.fillMaxSize(),
-                categoryId = selectedCategory.id
+                //categoryId = selectedCategory.id
             )
         }
     }

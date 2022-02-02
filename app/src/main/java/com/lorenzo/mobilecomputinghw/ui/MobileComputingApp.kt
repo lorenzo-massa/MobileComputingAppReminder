@@ -33,7 +33,7 @@ fun MobileComputingApp(
                 userLogged = userName
             )
         }
-        composable(route = "payment") {
+        composable(route = "reminder") {
             Payment(onBackPress = appState::navigateBack)
         }
     }

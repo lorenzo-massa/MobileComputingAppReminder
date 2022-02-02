@@ -24,45 +24,43 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.lorenzo.mobilecomputinghw.data.entity.Category
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.data.room.PaymentToCategory
 import com.lorenzo.mobilecomputinghw.util.viewModelProviderFactoryOf
 import com.lorenzo.mobilecomputinghw.R
+import com.lorenzo.mobilecomputinghw.ui.home.HomeViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun CategoryPayment(
-    categoryId: Long,
+fun CategoryReminder(
+    viewModel: HomeViewModel,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: CategoryPaymentViewModel = viewModel(
-        key = "category_list_$categoryId",
-        factory = viewModelProviderFactoryOf { CategoryPaymentViewModel(categoryId) }
-    )
     val viewState by viewModel.state.collectAsState()
 
     Column(modifier = modifier) {
-        PaymentList(
-            list = viewState.payments
+        ReminderList(
+            list = viewState.reminders
         )
     }
 }
 
 @Composable
-private fun PaymentList(
-    list: List<PaymentToCategory>
+private fun ReminderList(
+    list: List<Reminder>
 ) {
     LazyColumn(
         contentPadding = PaddingValues(0.dp),
         verticalArrangement = Arrangement.Center
     ) {
         items(list) { item ->
-            PaymentListItem(
-                reminder = item.reminder,
-                category = item.category,
+            ReminderListItem(
+                reminder = item,
+                //category = item.category,
                 onClick = {},
                 modifier = Modifier.fillParentMaxWidth(),
             )
@@ -70,10 +68,11 @@ private fun PaymentList(
     }
 }
 
+
 @Composable
-private fun PaymentListItem(
+private fun ReminderListItem(
     reminder: Reminder,
-    category: Category,
+    //category: Category,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -87,9 +86,9 @@ private fun PaymentListItem(
             }
         )
 
-        // title
+        // message
         Text(
-            text = reminder.paymentTitle,
+            text = reminder.message,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier.constrainAs(paymentTitle) {
@@ -106,6 +105,7 @@ private fun PaymentListItem(
         )
 
         // category
+        /*
         Text(
             text = category.name,
             maxLines = 1,
@@ -123,10 +123,10 @@ private fun PaymentListItem(
                 width = Dimension.preferredWrapContent
             }
         )
-
+        */
         // date
         Text(
-            text = reminder.paymentDate.toDateString(),
+            text = reminder.reminder_time,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.caption,
@@ -170,5 +170,4 @@ private fun Date.formatToString(): String {
 
 private fun Long.toDateString(): String {
     return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(Date(this))
-
 }

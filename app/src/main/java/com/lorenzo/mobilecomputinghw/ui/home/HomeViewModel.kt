@@ -3,8 +3,11 @@ package com.lorenzo.mobilecomputinghw.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lorenzo.mobilecomputinghw.Graph
+import com.lorenzo.mobilecomputinghw.Graph.reminderRepository
 import com.lorenzo.mobilecomputinghw.data.entity.Category
+import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.data.repository.CategoryRepository
+import com.lorenzo.mobilecomputinghw.ui.payment.ReminderViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -12,39 +15,30 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val categoryRepository: CategoryRepository = Graph.categoryRepository
+    //private val categoryRepository: CategoryRepository = Graph.categoryRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeViewState())
-    private val _selectedCategory = MutableStateFlow<Category?>(null)
+    //private val _selectedCategory = MutableStateFlow<Category?>(null)
 
     val state: StateFlow<HomeViewState>
         get() = _state
 
-    fun onCategorySelected(category: Category) {
+    /*fun onCategorySelected(category: Category) {
         _selectedCategory.value = category
-    }
+    }*/
 
     init {
         viewModelScope.launch {
-
-            combine(
-                categoryRepository.categories().onEach { list ->
-                    if (list.isNotEmpty() && _selectedCategory.value == null) {
-                        _selectedCategory.value = list[0]
-                    }
-                },
-                _selectedCategory
-            ) { categories, selectedCategory ->
-                HomeViewState(
-                    categories = categories,
-                    selectedCategory = selectedCategory
-                )
-            }.collect { _state.value = it }
+            reminderRepository.reminders().collect { reminders ->
+                _state.value = HomeViewState(reminders)
+            }
         }
 
-        loadCategoriesFromDb()
-    }
 
+
+        //loadCategoriesFromDb()
+    }
+    /*
     private fun loadCategoriesFromDb() {
         val list = mutableListOf(
             Category(name = "Food"),
@@ -61,10 +55,11 @@ class HomeViewModel(
         viewModelScope.launch {
             list.forEach { category -> categoryRepository.addCategory(category) }
         }
-    }
+    }*/
 }
 
 data class HomeViewState(
-    val categories: List<Category> = emptyList(),
-    val selectedCategory: Category? = null
+    //val categories: List<Category> = emptyList(),
+    //val selectedCategory: Category? = null
+    val reminders: List<Reminder> = emptyList()
 )

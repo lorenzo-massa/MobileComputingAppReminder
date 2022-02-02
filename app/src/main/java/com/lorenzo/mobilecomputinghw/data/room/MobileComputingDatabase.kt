@@ -15,7 +15,7 @@ import com.lorenzo.mobilecomputinghw.data.entity.User
     exportSchema = false
 )
 abstract class MobileComputingDatabase : RoomDatabase() {
-    abstract fun categoryDao(): CategoryDao
+    //abstract fun categoryDao(): CategoryDao
     abstract fun reminderDao(): ReminderDao
     abstract fun userDao(): UserDao
 }

@@ -45,12 +45,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun Payment(
     onBackPress: () -> Unit,
-    viewModel: PaymentViewModel = viewModel()
+    viewModel: ReminderViewModel = viewModel()
 ) {
     val viewState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val title = rememberSaveable { mutableStateOf("") }
-    val category = rememberSaveable { mutableStateOf("") }
+    //val category = rememberSaveable { mutableStateOf("") }
     val amount = rememberSaveable { mutableStateOf("") }
 
     Surface {
@@ -82,10 +82,10 @@ fun Payment(
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                CategoryListDropdown(
+                /*CategoryListDropdown(
                     viewState = viewState,
                     category = category
-                )
+                )*/
                 Spacer(modifier = Modifier.height(10.dp))
                 OutlinedTextField(
                     value = amount.value,
@@ -105,13 +105,13 @@ fun Payment(
                         coroutineScope.launch {
                             viewModel.saveReminder(
                                 com.lorenzo.mobilecomputinghw.data.entity.Reminder(
-                                    paymentTitle = title.value,
-                                    paymentAmount = amount.value.toDouble(),
-                                    paymentDate = Date().time,
-                                    paymentCategoryId = getCategoryId(
-                                        viewState.categories,
-                                        category.value
-                                    )
+                                    message = title.value,
+                                    location_x = "",
+                                    location_y = "",
+                                    reminder_time = "",
+                                    creation_time = "",
+                                    creator_id = 0,
+                                    reminder_seen = 0,
                                 )
                             )
                         }
@@ -127,14 +127,13 @@ fun Payment(
         }
     }
 }
-
+/*
 private fun getCategoryId(categories: List<Category>, categoryName: String): Long {
     return categories.first { category -> category.name == categoryName }.id
-}
+}*/
 
-@Composable
-private fun CategoryListDropdown(
-    viewState: PaymentViewState,
+/*private fun CategoryListDropdown(
+    viewState: ReminderViewState,
     category: MutableState<String>
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -164,7 +163,7 @@ private fun CategoryListDropdown(
             onDismissRequest = { expanded = false },
             modifier = Modifier.fillMaxWidth()
         ) {
-            viewState.categories.forEach { dropDownOption ->
+            viewState.reminders.forEach { dropDownOption ->
                 DropdownMenuItem(
                     onClick = {
                         category.value = dropDownOption.name
@@ -177,4 +176,4 @@ private fun CategoryListDropdown(
             }
         }
     }
-}
+}*/

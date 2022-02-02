@@ -10,8 +10,8 @@ import com.lorenzo.mobilecomputinghw.data.entity.Category
 //Message, location_x, location_y, reminder_time, creation_time, creator_id, reminder_seen
 
 @Entity(
-    tableName = "payments",
-    indices = [
+    tableName = "reminders",
+    /*indices = [
         Index("id", unique = true),
         Index("payment_category_id")
     ],
@@ -23,13 +23,16 @@ import com.lorenzo.mobilecomputinghw.data.entity.Category
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ]*/
 )
 
 data class Reminder(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val paymentId: Long = 0,
-    @ColumnInfo(name = "payment_title") val paymentTitle: String,
-    @ColumnInfo(name = "payment_date") val paymentDate: Long,
-    @ColumnInfo(name = "payment_category_id") val paymentCategoryId: Long,
-    @ColumnInfo(name = "payment_amount") val paymentAmount: Double
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val reminderId: Long = 0,
+    @ColumnInfo(name = "message") val message: String,
+    @ColumnInfo(name = "location_x") val location_x: String,
+    @ColumnInfo(name = "location_y") val location_y: String,
+    @ColumnInfo(name = "reminder_time") val reminder_time: String,
+    @ColumnInfo(name = "creation_time") val creation_time: String,
+    @ColumnInfo(name = "creator_id") val creator_id: Long,
+    @ColumnInfo(name = "reminder_seen") val reminder_seen: Long
 )

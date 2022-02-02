@@ -15,11 +15,11 @@ import com.lorenzo.mobilecomputinghw.data.room.MobileComputingDatabase
 object Graph {
     lateinit var database: MobileComputingDatabase
 
-    val categoryRepository by lazy {
+    /*val categoryRepository by lazy {
         CategoryRepository(
             categoryDao = database.categoryDao()
         )
-    }
+    }*/
 
     val reminderRepository by lazy {
         ReminderRepository(

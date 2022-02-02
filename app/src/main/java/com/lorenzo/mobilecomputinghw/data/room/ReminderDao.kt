@@ -6,20 +6,21 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.lorenzo.mobilecomputinghw.data.entity.Category
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class ReminderDao {
-    @Query("""
+    /*@Query("""
         SELECT payments.* FROM payments
         INNER JOIN categories ON payments.payment_category_id = categories.id
         WHERE payment_category_id = :categoryId
     """)
     abstract fun paymentsFromCategory(categoryId: Long): Flow<List<PaymentToCategory>>
-
-    @Query("""SELECT * FROM payments WHERE id = :paymentId""")
-    abstract fun reminder(paymentId: Long): Reminder?
+    */
+    @Query("""SELECT * FROM reminders WHERE id = :reminderId""")
+    abstract fun reminder(reminderId: Long): Reminder?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(entity: Reminder): Long
@@ -29,4 +30,7 @@ abstract class ReminderDao {
 
     @Delete
     abstract suspend fun delete(entity: Reminder): Int
+
+    @Query("SELECT * FROM reminders LIMIT 15")
+    abstract fun reminders(): Flow<List<Reminder>>
 }

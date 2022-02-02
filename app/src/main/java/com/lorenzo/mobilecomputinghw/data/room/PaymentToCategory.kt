@@ -8,7 +8,7 @@ import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import java.util.*
 
 class PaymentToCategory {
-    @Embedded
+    /*@Embedded
     lateinit var reminder: Reminder
 
     @Relation(parentColumn = "payment_category_id", entityColumn = "id")
@@ -31,4 +31,6 @@ class PaymentToCategory {
     }
 
     override fun hashCode(): Int = Objects.hash(reminder, _categories)
+    */
+
 }

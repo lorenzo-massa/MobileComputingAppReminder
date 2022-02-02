@@ -11,13 +11,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class PaymentViewModel(
+class ReminderViewModel(
     private val reminderRepository: ReminderRepository = Graph.reminderRepository,
-    private val categoryRepository: CategoryRepository = Graph.categoryRepository
+    //private val categoryRepository: CategoryRepository = Graph.categoryRepository
 ): ViewModel() {
-    private val _state = MutableStateFlow(PaymentViewState())
+    private val _state = MutableStateFlow(ReminderViewState())
 
-    val state: StateFlow<PaymentViewState>
+    val state: StateFlow<ReminderViewState>
         get() = _state
 
     suspend fun saveReminder(reminder: Reminder): Long {
@@ -26,13 +26,13 @@ class PaymentViewModel(
 
     init {
         viewModelScope.launch {
-            categoryRepository.categories().collect { categories ->
-                _state.value = PaymentViewState(categories)
+            reminderRepository.reminders().collect { reminders ->
+                _state.value = ReminderViewState(reminders)
             }
         }
     }
 }
 
-data class PaymentViewState(
-    val categories: List<Category> = emptyList()
+data class ReminderViewState(
+    val reminders: List<Reminder> = emptyList()
 )
