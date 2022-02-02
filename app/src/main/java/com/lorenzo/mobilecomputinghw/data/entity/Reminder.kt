@@ -7,6 +7,8 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.lorenzo.mobilecomputinghw.data.entity.Category
 
+//Message, location_x, location_y, reminder_time, creation_time, creator_id, reminder_seen
+
 @Entity(
     tableName = "payments",
     indices = [
@@ -24,7 +26,7 @@ import com.lorenzo.mobilecomputinghw.data.entity.Category
     ]
 )
 
-data class Payment(
+data class Reminder(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val paymentId: Long = 0,
     @ColumnInfo(name = "payment_title") val paymentTitle: String,
     @ColumnInfo(name = "payment_date") val paymentDate: Long,

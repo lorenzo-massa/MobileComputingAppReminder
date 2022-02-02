@@ -26,9 +26,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.lorenzo.mobilecomputinghw.data.entity.Category
-import com.lorenzo.mobilecomputinghw.data.entity.Payment
+import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.data.room.PaymentToCategory
-import com.lorenzo.mobilecomputinghw.ui.home.categoryPayment.CategoryPaymentViewModel
 import com.lorenzo.mobilecomputinghw.util.viewModelProviderFactoryOf
 import com.lorenzo.mobilecomputinghw.R
 import java.text.SimpleDateFormat
@@ -62,7 +61,7 @@ private fun PaymentList(
     ) {
         items(list) { item ->
             PaymentListItem(
-                payment = item.payment,
+                reminder = item.reminder,
                 category = item.category,
                 onClick = {},
                 modifier = Modifier.fillParentMaxWidth(),
@@ -73,7 +72,7 @@ private fun PaymentList(
 
 @Composable
 private fun PaymentListItem(
-    payment: Payment,
+    reminder: Reminder,
     category: Category,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -90,7 +89,7 @@ private fun PaymentListItem(
 
         // title
         Text(
-            text = payment.paymentTitle,
+            text = reminder.paymentTitle,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier.constrainAs(paymentTitle) {
@@ -127,7 +126,7 @@ private fun PaymentListItem(
 
         // date
         Text(
-            text = payment.paymentDate.toDateString(),
+            text = reminder.paymentDate.toDateString(),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.caption,

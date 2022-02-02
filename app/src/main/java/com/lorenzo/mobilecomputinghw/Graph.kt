@@ -3,7 +3,7 @@ package com.lorenzo.mobilecomputinghw
 import android.content.Context
 import androidx.room.Room
 import com.lorenzo.mobilecomputinghw.data.repository.CategoryRepository
-import com.lorenzo.mobilecomputinghw.data.repository.PaymentRepository
+import com.lorenzo.mobilecomputinghw.data.repository.ReminderRepository
 import com.lorenzo.mobilecomputinghw.data.repository.UserRepository
 import com.lorenzo.mobilecomputinghw.data.room.MobileComputingDatabase
 
@@ -21,9 +21,9 @@ object Graph {
         )
     }
 
-    val paymentRepository by lazy {
-        PaymentRepository(
-            paymentDao = database.paymentDao()
+    val reminderRepository by lazy {
+        ReminderRepository(
+            reminderDao = database.reminderDao()
         )
     }
 

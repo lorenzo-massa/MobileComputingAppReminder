@@ -3,13 +3,8 @@ package com.lorenzo.mobilecomputinghw.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lorenzo.mobilecomputinghw.Graph
-import com.lorenzo.mobilecomputinghw.data.entity.Category
-import com.lorenzo.mobilecomputinghw.data.entity.Payment
 import com.lorenzo.mobilecomputinghw.data.entity.User
-import com.lorenzo.mobilecomputinghw.data.repository.CategoryRepository
-import com.lorenzo.mobilecomputinghw.data.repository.PaymentRepository
 import com.lorenzo.mobilecomputinghw.data.repository.UserRepository
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

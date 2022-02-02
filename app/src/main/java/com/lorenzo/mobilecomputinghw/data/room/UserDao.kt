@@ -1,8 +1,6 @@
 package com.lorenzo.mobilecomputinghw.data.room
 
 import androidx.room.*
-import com.lorenzo.mobilecomputinghw.data.entity.Category
-import com.lorenzo.mobilecomputinghw.data.entity.Payment
 import com.lorenzo.mobilecomputinghw.data.entity.User
 import kotlinx.coroutines.flow.Flow
 
