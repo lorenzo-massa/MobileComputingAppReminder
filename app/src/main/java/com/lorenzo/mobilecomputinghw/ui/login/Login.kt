@@ -81,7 +81,7 @@ fun Login(
             Button(
                 onClick ={
                     if(checkLogin(viewState,username,password))
-                        navController.navigate(route = "home")
+                        navController.navigate(route = "home/${username.value}")
                     else
                         Toast.makeText(
                             context,
@@ -101,15 +101,14 @@ fun Login(
             Button(
                 onClick ={
                     if(checkRegistration(viewState,username,password)){
+                        var user = com.lorenzo.mobilecomputinghw.data.entity.User(
+                            userName = username.value,
+                            password = password.value
+                        )
                         coroutineScope.launch {
-                            viewModel.saveUser(
-                                com.lorenzo.mobilecomputinghw.data.entity.User(
-                                    userName = username.value,
-                                    password = password.value
-                                )
-                            )
+                            viewModel.saveUser(user)
                         }
-                        navController.navigate(route = "home")
+                        navController.navigate("home/${username.value}")
                     }
                     else
                         Toast.makeText(

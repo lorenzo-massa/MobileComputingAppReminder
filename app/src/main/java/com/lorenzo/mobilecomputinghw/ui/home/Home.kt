@@ -1,19 +1,19 @@
 package com.lorenzo.mobilecomputinghw.ui.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.ManageAccounts
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -21,11 +21,13 @@ import com.lorenzo.mobilecomputinghw.data.entity.Category
 import com.lorenzo.mobilecomputinghw.ui.home.categoryPayment.CategoryPayment
 import com.google.accompanist.insets.systemBarsPadding
 import com.lorenzo.mobilecomputinghw.R
+import com.lorenzo.mobilecomputinghw.data.entity.User
 
 @Composable
 fun Home(
     viewModel: HomeViewModel = viewModel(),
-    navController: NavController
+    navController: NavController,
+    userLogged: String?
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -37,7 +39,8 @@ fun Home(
                 selectedCategory = selectedCategory,
                 categories = viewState.categories,
                 onCategorySelected = viewModel::onCategorySelected,
-                navController = navController
+                navController = navController,
+                userLogged = userLogged
             )
         }
     }
@@ -50,6 +53,7 @@ fun HomeContent(
     categories: List<Category>,
     onCategorySelected: (Category) -> Unit,
     navController: NavController,
+    userLogged: String?
 ) {
     Scaffold(
         modifier = Modifier.padding(bottom = 24.dp),
@@ -75,14 +79,15 @@ fun HomeContent(
 
             HomeAppBar(
                 backgroundColor = appBarColor,
-                navController = navController
+                navController = navController,
+                userLogged = userLogged
             )
 
-            CategoryTabs(
+            /*CategoryTabs(
                 categories = categories,
                 selectedCategory = selectedCategory,
                 onCategorySelected = onCategorySelected,
-            )
+            )*/
 
             CategoryPayment(
                 modifier = Modifier.fillMaxSize(),
@@ -95,7 +100,8 @@ fun HomeContent(
 @Composable
 private fun HomeAppBar(
     backgroundColor: Color,
-    navController: NavController
+    navController: NavController,
+    userLogged: String?
 ) {
     val expanded = remember { mutableStateOf(false) }
 
@@ -122,6 +128,26 @@ private fun HomeAppBar(
                 expanded = expanded.value,
                 onDismissRequest = { expanded.value = false },
             ) {
+                DropdownMenuItem(onClick = {
+                    expanded.value = false
+                }) {
+                    if (userLogged != null) {
+                        Box (
+                            contentAlignment = Alignment.CenterEnd
+                                ){
+                            Text(
+                                text = userLogged, textAlign = TextAlign.Left,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Icon(
+                                imageVector = Icons.Filled.AccountCircle,
+                                contentDescription = stringResource(R.string.account),
+                                tint = MaterialTheme.colors.primary,
+                            )
+                        }
+                    }
+                }
+
                 DropdownMenuItem(onClick = {
                     expanded.value = false
                 }) {

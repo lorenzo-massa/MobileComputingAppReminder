@@ -1,8 +1,10 @@
 package com.lorenzo.mobilecomputinghw.ui
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.lorenzo.mobilecomputinghw.ui.home.Home
 import com.lorenzo.mobilecomputinghw.ui.login.Login
 import com.lorenzo.mobilecomputinghw.ui.payment.Payment
@@ -18,9 +20,17 @@ fun MobileComputingApp(
         composable(route = "login") {
             Login(navController = appState.navController)
         }
-        composable(route = "home") {
+        composable(route = "home/{userName}",
+            arguments = listOf(
+                navArgument("userName") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+                val userName = backStackEntry.arguments?.getString("userName") ?: ""
             Home(
-                navController = appState.navController
+                navController = appState.navController,
+                userLogged = userName
             )
         }
         composable(route = "payment") {
