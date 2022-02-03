@@ -153,6 +153,7 @@ private fun HomeAppBar(
                 }
 
                 DropdownMenuItem(onClick = {
+                    navController.navigate(route = "profile/${userLogged}")
                     expanded.value = false
                 }) {
                     Text("My profile")

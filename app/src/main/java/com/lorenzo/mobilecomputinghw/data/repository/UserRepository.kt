@@ -10,4 +10,9 @@ class UserRepository(
     suspend fun getUsers(): Flow<List<User>> = userDao.getUsers()
 
     suspend fun addUser(user: User) = userDao.insert(user)
+
+    suspend fun updateUser(user: User) = userDao.update(user)
+
+
+    suspend fun getUser(username: String): User = userDao.getUser(username)
 }

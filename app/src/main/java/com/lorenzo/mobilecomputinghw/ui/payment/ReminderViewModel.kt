@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 
 class ReminderViewModel(
     private val reminderRepository: ReminderRepository = Graph.reminderRepository,
-    //private val categoryRepository: CategoryRepository = Graph.categoryRepository
 ): ViewModel() {
     private val _state = MutableStateFlow(ReminderViewState())
 

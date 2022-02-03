@@ -8,6 +8,7 @@ import androidx.navigation.navArgument
 import com.lorenzo.mobilecomputinghw.ui.home.Home
 import com.lorenzo.mobilecomputinghw.ui.login.Login
 import com.lorenzo.mobilecomputinghw.ui.payment.Payment
+import com.lorenzo.mobilecomputinghw.ui.profile.Profile
 
 @Composable
 fun MobileComputingApp(
@@ -35,6 +36,33 @@ fun MobileComputingApp(
         }
         composable(route = "reminder") {
             Payment(onBackPress = appState::navigateBack)
+        }
+        composable(route = "home/{userName}",
+            arguments = listOf(
+                navArgument("userName") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val userName = backStackEntry.arguments?.getString("userName") ?: ""
+            Home(
+                navController = appState.navController,
+                userLogged = userName
+            )
+        }
+        composable(route = "profile/{userName}",
+            arguments = listOf(
+                navArgument("userName") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val userName = backStackEntry.arguments?.getString("userName") ?: ""
+            Profile(
+                onBackPress = appState::navigateBack,
+                navController = appState.navController,
+                userLogged = userName
+            )
         }
     }
 }
