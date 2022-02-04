@@ -80,8 +80,11 @@ fun Login(
             Spacer(modifier = Modifier.height(10.dp))
             Button(
                 onClick ={
-                    if(checkLogin(viewState,username,password))
-                        navController.navigate(route = "home/${username.value}")
+                    if(checkLogin(viewState,username,password)) {
+                        var id: Long
+                        id = getId(viewState, username)
+                        navController.navigate(route = "home/${username.value},${id}")
+                    }
                     else
                         Toast.makeText(
                             context,
@@ -108,7 +111,9 @@ fun Login(
                         coroutineScope.launch {
                             viewModel.saveUser(user)
                         }
-                        navController.navigate("home/${username.value}")
+                        var id:Long
+                        id = getId(viewState,username)
+                        navController.navigate("home/${username.value},${id}")
                     }
                     else
                         Toast.makeText(
@@ -180,4 +185,13 @@ fun checkRegistration(viewState: LoginViewState, userName: MutableState<String>,
         return false;
 
     return true;
+}
+
+fun getId(viewState: LoginViewState, userName: MutableState<String>) : Long {
+
+    viewState.users.forEach(){
+        if (it.userName == userName.value )
+            return it.id
+    }
+    return 0
 }

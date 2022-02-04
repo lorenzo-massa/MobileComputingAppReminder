@@ -77,7 +77,7 @@ private fun ReminderListItem(
     modifier: Modifier = Modifier,
 ) {
     ConstraintLayout(modifier = modifier.clickable { onClick() }) {
-        val (divider, paymentTitle, paymentCategory, icon, date) = createRefs()
+        val (divider, remainderMessage, paymentCategory, icon, date) = createRefs()
         Divider(
             Modifier.constrainAs(divider) {
                 top.linkTo(parent.top)
@@ -91,7 +91,7 @@ private fun ReminderListItem(
             text = reminder.message,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle1,
-            modifier = Modifier.constrainAs(paymentTitle) {
+            modifier = Modifier.constrainAs(remainderMessage) {
                 linkTo(
                     start = parent.start,
                     end = icon.start,
@@ -139,13 +139,13 @@ private fun ReminderListItem(
                     bias = 0f // float this towards the start. this was is the fix we needed
                 )
                 centerVerticallyTo(paymentCategory)
-                top.linkTo(paymentTitle.bottom, 6.dp)
+                top.linkTo(remainderMessage.bottom, 6.dp)
                 bottom.linkTo(parent.bottom, 10.dp)
             }
         )
 
         // icon
-        IconButton(
+        /*IconButton(
             onClick = { /*TODO*/ },
             modifier = Modifier
                 .size(50.dp)
@@ -160,7 +160,7 @@ private fun ReminderListItem(
                 imageVector = Icons.Filled.Check,
                 contentDescription = stringResource(R.string.check_mark)
             )
-        }
+        }*/
     }
 }
 

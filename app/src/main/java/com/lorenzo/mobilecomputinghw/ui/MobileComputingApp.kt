@@ -5,6 +5,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.ui.home.Home
 import com.lorenzo.mobilecomputinghw.ui.login.Login
 import com.lorenzo.mobilecomputinghw.ui.payment.Payment
@@ -21,48 +22,45 @@ fun MobileComputingApp(
         composable(route = "login") {
             Login(navController = appState.navController)
         }
-        composable(route = "home/{userName}",
+        composable(route = "home/{userName},{id}",
             arguments = listOf(
                 navArgument("userName") {
                     type = NavType.StringType
+                }, navArgument("id") {
+                    type = NavType.LongType
                 }
             )
         ) { backStackEntry ->
                 val userName = backStackEntry.arguments?.getString("userName") ?: ""
+                val id = backStackEntry.arguments?.getLong("id")
             Home(
                 navController = appState.navController,
-                userLogged = userName
+                userLogged = userName,
+                idLogged = id
             )
         }
         composable(route = "reminder") {
             Payment(onBackPress = appState::navigateBack)
         }
-        composable(route = "home/{userName}",
+        composable(route = "profile/{userName},{id}",
             arguments = listOf(
                 navArgument("userName") {
                     type = NavType.StringType
+                }, navArgument("id") {
+                    type = NavType.LongType
                 }
             )
         ) { backStackEntry ->
             val userName = backStackEntry.arguments?.getString("userName") ?: ""
-            Home(
-                navController = appState.navController,
-                userLogged = userName
-            )
-        }
-        composable(route = "profile/{userName}",
-            arguments = listOf(
-                navArgument("userName") {
-                    type = NavType.StringType
-                }
-            )
-        ) { backStackEntry ->
-            val userName = backStackEntry.arguments?.getString("userName") ?: ""
-            Profile(
-                onBackPress = appState::navigateBack,
-                navController = appState.navController,
-                userLogged = userName
-            )
+            val id = backStackEntry.arguments?.getLong("id")
+            if (id != null) {
+                Profile(
+                    onBackPress = appState::navigateBack,
+                    navController = appState.navController,
+                    userLogged = userName,
+                    idLogged = id
+                )
+            }
         }
     }
 }

@@ -28,7 +28,8 @@ import com.lorenzo.mobilecomputinghw.ui.home.categoryPayment.CategoryReminder
 fun Home(
     viewModel: HomeViewModel = viewModel(),
     navController: NavController,
-    userLogged: String?
+    userLogged: String?,
+    idLogged: Long?
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -42,7 +43,8 @@ fun Home(
                 //onCategorySelected = viewModel::onCategorySelected,
                 reminders = viewState.reminders,
                 navController = navController,
-                userLogged = userLogged
+                userLogged = userLogged,
+                idLogged = idLogged
             )
         }
     //}
@@ -56,7 +58,8 @@ fun HomeContent(
     //onCategorySelected: (Category) -> Unit,
     reminders: List<Reminder>,
     navController: NavController,
-    userLogged: String?
+    userLogged: String?,
+    idLogged: Long?
 ) {
     Scaffold(
         modifier = Modifier.padding(bottom = 24.dp),
@@ -83,7 +86,8 @@ fun HomeContent(
             HomeAppBar(
                 backgroundColor = appBarColor,
                 navController = navController,
-                userLogged = userLogged
+                userLogged = userLogged,
+                idLogged = idLogged
             )
 
             /*CategoryTabs(
@@ -105,7 +109,8 @@ fun HomeContent(
 private fun HomeAppBar(
     backgroundColor: Color,
     navController: NavController,
-    userLogged: String?
+    userLogged: String?,
+    idLogged: Long?
 ) {
     val expanded = remember { mutableStateOf(false) }
 
@@ -153,7 +158,7 @@ private fun HomeAppBar(
                 }
 
                 DropdownMenuItem(onClick = {
-                    navController.navigate(route = "profile/${userLogged}")
+                    navController.navigate(route = "profile/${userLogged},${idLogged}")
                     expanded.value = false
                 }) {
                     Text("My profile")

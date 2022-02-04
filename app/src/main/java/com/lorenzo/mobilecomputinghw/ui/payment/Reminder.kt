@@ -49,7 +49,7 @@ fun Payment(
 ) {
     val viewState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    val title = rememberSaveable { mutableStateOf("") }
+    val message = rememberSaveable { mutableStateOf("") }
     //val category = rememberSaveable { mutableStateOf("") }
     val amount = rememberSaveable { mutableStateOf("") }
 
@@ -76,9 +76,9 @@ fun Payment(
                 modifier = Modifier.padding(16.dp)
             ) {
                 OutlinedTextField(
-                    value = title.value,
-                    onValueChange = { title.value = it },
-                    label = { Text(text = "Remainder title")},
+                    value = message.value,
+                    onValueChange = { message.value = it },
+                    label = { Text(text = "Remainder message")},
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -86,17 +86,6 @@ fun Payment(
                     viewState = viewState,
                     category = category
                 )*/
-                Spacer(modifier = Modifier.height(10.dp))
-                OutlinedTextField(
-                    value = amount.value,
-                    onValueChange = { amount.value = it },
-                    label = { Text(text = "Amount")},
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
-                    )
-                )
-                Spacer(modifier = Modifier.height(10.dp))
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Button(
@@ -105,7 +94,7 @@ fun Payment(
                         coroutineScope.launch {
                             viewModel.saveReminder(
                                 com.lorenzo.mobilecomputinghw.data.entity.Reminder(
-                                    message = title.value,
+                                    message = message.value,
                                     location_x = "",
                                     location_y = "",
                                     reminder_time = "",

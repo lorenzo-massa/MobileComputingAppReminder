@@ -21,12 +21,13 @@ import androidx.lifecycle.ViewModelProvider
 fun Profile(
     onBackPress: () -> Unit,
     navController: NavController,
-    userLogged: String?,
+    userLogged: String,
+    idLogged: Long,
     viewModel: ProfileViewModel = viewModel()
 ) {
     val viewState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    val userName = rememberSaveable { mutableStateOf("") }
+    val userName = rememberSaveable { mutableStateOf(userLogged) }
     val password = rememberSaveable { mutableStateOf("") }
 
     Surface {
@@ -75,6 +76,7 @@ fun Profile(
                             //TODO Check Username
                             viewModel.saveUser(
                                 User(
+                                    id = idLogged,
                                     userName = userName.value,
                                     password = password.value
                                 )

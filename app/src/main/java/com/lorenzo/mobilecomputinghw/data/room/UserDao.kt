@@ -18,9 +18,6 @@ abstract class UserDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun update(entity: User)
 
-    @Update
-    abstract fun updateU(vararg users: User)
-
     @Query(value = "SELECT * FROM user_table WHERE userName=:username")
     abstract fun getUser(username: String): User
 
