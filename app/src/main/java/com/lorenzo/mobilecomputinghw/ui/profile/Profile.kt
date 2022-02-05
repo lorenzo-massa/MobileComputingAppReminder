@@ -1,5 +1,6 @@
 package com.lorenzo.mobilecomputinghw.ui.profile
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -9,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -16,6 +18,7 @@ import com.google.accompanist.insets.systemBarsPadding
 import com.lorenzo.mobilecomputinghw.data.entity.User
 import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModelProvider
+import com.lorenzo.mobilecomputinghw.ui.login.LoginViewState
 
 @Composable
 fun Profile(
@@ -29,6 +32,7 @@ fun Profile(
     val coroutineScope = rememberCoroutineScope()
     val userName = rememberSaveable { mutableStateOf(userLogged) }
     val password = rememberSaveable { mutableStateOf("") }
+    val context = LocalContext.current
 
     Surface {
         Column(
@@ -69,20 +73,26 @@ fun Profile(
                 Button(
                     enabled = true,
                     onClick = {
-                        //if (userLogged != null) {
-                        //    viewModel.setUser(userLogged)
-                        //}
-                        coroutineScope.launch {
-                            //TODO Check Username
-                            viewModel.saveUser(
-                                User(
-                                    id = idLogged,
-                                    userName = userName.value,
-                                    password = password.value
+                        if(checkProfile(userName,password)){
+                            coroutineScope.launch {
+                                //TODO Check Username
+                                viewModel.saveUser(
+                                    User(
+                                        id = idLogged,
+                                        userName = userName.value,
+                                        password = password.value
+                                    )
                                 )
-                            )
+                            }
+                            onBackPress()
+                        }else{
+                            Toast.makeText(
+                                context,
+                                "Username and Password are mandatory!",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                        onBackPress()
+
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -94,3 +104,12 @@ fun Profile(
         }
     }
 }
+
+fun checkProfile(userName: MutableState<String>, password: MutableState<String>): Boolean {
+
+    if(userName.value.isBlank() || password.value.isBlank())
+        return false;
+
+    return true
+}
+

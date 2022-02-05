@@ -1,13 +1,13 @@
 package com.lorenzo.mobilecomputinghw.ui.home
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.rounded.ManageAccounts
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +23,9 @@ import com.lorenzo.mobilecomputinghw.R
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.data.entity.User
 import com.lorenzo.mobilecomputinghw.ui.home.categoryPayment.CategoryReminder
+import kotlinx.coroutines.launch
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun Home(
     viewModel: HomeViewModel = viewModel(),
@@ -31,21 +33,41 @@ fun Home(
     userLogged: String?,
     idLogged: Long?
 ) {
+
     val viewState by viewModel.state.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+
+    coroutineScope.launch {
+        viewModel.updateUsers()
+    }
+
+    val user: User? = getUser(viewState, idLogged)
+
+
+
+    if (user != null) {
+        Log.d("d", "id: "+user.id)
+        Log.d("d", "Username: "+user.userName)
+        Log.d("d", "Password: "+user.password)
+    }
+
+
+
 
     //val selectedCategory = viewState.selectedCategory
 
     //if (viewState.categories.isNotEmpty() && selectedCategory != null) {
         Surface(modifier = Modifier.fillMaxSize()) {
-            HomeContent(
-                //selectedCategory = selectedCategory,
-                //categories = viewState.categories,
-                //onCategorySelected = viewModel::onCategorySelected,
-                reminders = viewState.reminders,
-                navController = navController,
-                userLogged = userLogged,
-                idLogged = idLogged
-            )
+            if (user != null) {
+                HomeContent(
+                    //selectedCategory = selectedCategory,
+                    //categories = viewState.categories,
+                    //onCategorySelected = viewModel::onCategorySelected,
+                    reminders = viewState.reminders,
+                    navController = navController,
+                    user = user
+                )
+            }
         }
     //}
 }
@@ -58,8 +80,7 @@ fun HomeContent(
     //onCategorySelected: (Category) -> Unit,
     reminders: List<Reminder>,
     navController: NavController,
-    userLogged: String?,
-    idLogged: Long?
+    user: User
 ) {
     Scaffold(
         modifier = Modifier.padding(bottom = 24.dp),
@@ -86,8 +107,7 @@ fun HomeContent(
             HomeAppBar(
                 backgroundColor = appBarColor,
                 navController = navController,
-                userLogged = userLogged,
-                idLogged = idLogged
+                user = user
             )
 
             /*CategoryTabs(
@@ -109,8 +129,7 @@ fun HomeContent(
 private fun HomeAppBar(
     backgroundColor: Color,
     navController: NavController,
-    userLogged: String?,
-    idLogged: Long?
+    user: User
 ) {
     val expanded = remember { mutableStateOf(false) }
 
@@ -140,25 +159,24 @@ private fun HomeAppBar(
                 DropdownMenuItem(onClick = {
                     expanded.value = false
                 }) {
-                    if (userLogged != null) {
-                        Box (
-                            contentAlignment = Alignment.CenterEnd
-                                ){
-                            Text(
-                                text = userLogged, textAlign = TextAlign.Left,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            Icon(
-                                imageVector = Icons.Filled.AccountCircle,
-                                contentDescription = stringResource(R.string.account),
-                                tint = MaterialTheme.colors.primary,
-                            )
-                        }
+                    Box (
+                        contentAlignment = Alignment.CenterEnd
+                            ){
+                        Text(
+                            text = user.userName, textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.AccountCircle,
+                            contentDescription = stringResource(R.string.account),
+                            tint = MaterialTheme.colors.primary,
+                        )
                     }
+
                 }
 
                 DropdownMenuItem(onClick = {
-                    navController.navigate(route = "profile/${userLogged},${idLogged}")
+                    navController.navigate(route = "profile/${user.userName},${user.id}")
                     expanded.value = false
                 }) {
                     Text("My profile")
@@ -229,3 +247,12 @@ private fun ChoiceChipContent(
 }
 
 private val emptyTabIndicator: @Composable (List<TabPosition>) -> Unit = {}
+
+fun getUser(viewState: HomeViewState, idLogged: Long?): User? {
+
+    viewState.users.forEach(){
+        if (it.id == idLogged )
+            return it
+    }
+    return null
+}

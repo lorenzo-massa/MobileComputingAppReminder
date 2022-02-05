@@ -1,11 +1,9 @@
-package com.lorenzo.mobilecomputinghw.ui.payment
+package com.lorenzo.mobilecomputinghw.ui.reminder
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lorenzo.mobilecomputinghw.Graph
-import com.lorenzo.mobilecomputinghw.data.entity.Category
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
-import com.lorenzo.mobilecomputinghw.data.repository.CategoryRepository
 import com.lorenzo.mobilecomputinghw.data.repository.ReminderRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

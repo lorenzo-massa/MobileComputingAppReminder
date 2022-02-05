@@ -2,16 +2,12 @@ package com.lorenzo.mobilecomputinghw.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lorenzo.mobilecomputinghw.Graph
 import com.lorenzo.mobilecomputinghw.Graph.reminderRepository
-import com.lorenzo.mobilecomputinghw.data.entity.Category
+import com.lorenzo.mobilecomputinghw.Graph.userRepository
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
-import com.lorenzo.mobilecomputinghw.data.repository.CategoryRepository
-import com.lorenzo.mobilecomputinghw.ui.payment.ReminderViewState
+import com.lorenzo.mobilecomputinghw.data.entity.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -27,11 +23,21 @@ class HomeViewModel(
         _selectedCategory.value = category
     }*/
 
+    suspend fun updateUsers(){
+        userRepository.getUsers().collect() { users ->
+            _state.value.users = users
+
+        }
+    }
+
     init {
         viewModelScope.launch {
-            reminderRepository.reminders().collect { reminders ->
-                _state.value = HomeViewState(reminders)
+            userRepository.getUsers().collect(){ users ->
+                reminderRepository.reminders().collect { reminders ->
+                    _state.value = HomeViewState(reminders,users)
+                }
             }
+
         }
 
 
@@ -61,5 +67,6 @@ class HomeViewModel(
 data class HomeViewState(
     //val categories: List<Category> = emptyList(),
     //val selectedCategory: Category? = null
-    val reminders: List<Reminder> = emptyList()
+    var reminders: List<Reminder> = emptyList(),
+    var users: List<User> = emptyList()
 )

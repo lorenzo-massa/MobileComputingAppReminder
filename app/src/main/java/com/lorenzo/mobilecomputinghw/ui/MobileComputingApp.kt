@@ -5,10 +5,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.ui.home.Home
 import com.lorenzo.mobilecomputinghw.ui.login.Login
-import com.lorenzo.mobilecomputinghw.ui.payment.Payment
+import com.lorenzo.mobilecomputinghw.ui.reminder.Payment
 import com.lorenzo.mobilecomputinghw.ui.profile.Profile
 
 @Composable
