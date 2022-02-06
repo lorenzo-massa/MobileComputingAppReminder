@@ -103,17 +103,21 @@ fun Login(
             Spacer(modifier = Modifier.height(60.dp))
             Button(
                 onClick ={
+
+
                     if(checkRegistration(viewState,username,password)){
-                        var user = com.lorenzo.mobilecomputinghw.data.entity.User(
+                        val user = com.lorenzo.mobilecomputinghw.data.entity.User(
                             userName = username.value,
                             password = password.value
                         )
                         coroutineScope.launch {
                             viewModel.saveUser(user)
                         }
-                        var id:Long
-                        id = getId(viewState,username)
-                        navController.navigate("home/${username.value},${id}")
+                        Toast.makeText(
+                            context,
+                            "User registered",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     else
                         Toast.makeText(

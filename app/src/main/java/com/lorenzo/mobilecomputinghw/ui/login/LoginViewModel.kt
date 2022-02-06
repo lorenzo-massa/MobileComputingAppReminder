@@ -32,5 +32,5 @@ class LoginViewModel(
 }
 
 data class LoginViewState(
-    val users: List<User> = emptyList()
+    var users: List<User> = emptyList()
 )
