@@ -43,17 +43,6 @@ fun Home(
 
     val user: User? = getUser(viewState, idLogged)
 
-
-
-    if (user != null) {
-        Log.d("d", "id: "+user.id)
-        Log.d("d", "Username: "+user.userName)
-        Log.d("d", "Password: "+user.password)
-    }
-
-
-
-
     //val selectedCategory = viewState.selectedCategory
 
     //if (viewState.categories.isNotEmpty() && selectedCategory != null) {
