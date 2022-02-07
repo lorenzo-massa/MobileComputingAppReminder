@@ -83,12 +83,12 @@ fun Login(
                     if(checkLogin(viewState,username,password)) {
                         var id: Long
                         id = getId(viewState, username)
-                        navController.navigate(route = "home/${username.value},${id}")
+                        navController.navigate(route = "home/${id}")
                     }
                     else
                         Toast.makeText(
                             context,
-                            "Incorect Username/Password",
+                            "Incorrect Username/Password",
                             Toast.LENGTH_SHORT
                         ).show()
                     },

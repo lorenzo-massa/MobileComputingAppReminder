@@ -5,10 +5,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.lorenzo.mobilecomputinghw.ui.editReminder.EditReminder
 import com.lorenzo.mobilecomputinghw.ui.home.Home
 import com.lorenzo.mobilecomputinghw.ui.login.Login
-import com.lorenzo.mobilecomputinghw.ui.reminder.Payment
 import com.lorenzo.mobilecomputinghw.ui.profile.Profile
+import com.lorenzo.mobilecomputinghw.ui.reminder.Reminder
 
 @Composable
 fun MobileComputingApp(
@@ -21,25 +22,21 @@ fun MobileComputingApp(
         composable(route = "login") {
             Login(navController = appState.navController)
         }
-        composable(route = "home/{userName},{id}",
+        composable(route = "home/{id}",
             arguments = listOf(
-                navArgument("userName") {
-                    type = NavType.StringType
-                }, navArgument("id") {
+                navArgument("id") {
                     type = NavType.LongType
                 }
             )
         ) { backStackEntry ->
-                val userName = backStackEntry.arguments?.getString("userName") ?: ""
                 val id = backStackEntry.arguments?.getLong("id")
             Home(
                 navController = appState.navController,
-                userLogged = userName,
                 idLogged = id
             )
         }
         composable(route = "reminder") {
-            Payment(onBackPress = appState::navigateBack)
+            Reminder(onBackPress = appState::navigateBack)
         }
         composable(route = "profile/{userName},{id}",
             arguments = listOf(
@@ -58,6 +55,21 @@ fun MobileComputingApp(
                     navController = appState.navController,
                     userLogged = userName,
                     idLogged = id
+                )
+            }
+        }
+        composable(route = "editReminder/{id}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.LongType
+                }
+            )
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getLong("id")
+            if (id != null) {
+                EditReminder(
+                    onBackPress = appState::navigateBack,
+                    reminderId = id
                 )
             }
         }

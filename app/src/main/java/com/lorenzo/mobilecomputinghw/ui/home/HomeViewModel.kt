@@ -30,6 +30,10 @@ class HomeViewModel(
         }
     }
 
+    suspend fun deleteReminder(id :Long){
+        reminderRepository.removeReminderById(id)
+    }
+
     init {
         viewModelScope.launch {
             userRepository.getUsers().collect(){ users ->

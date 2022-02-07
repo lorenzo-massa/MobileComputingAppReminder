@@ -15,9 +15,13 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,32 +30,39 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.lorenzo.mobilecomputinghw.data.entity.Category
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.data.room.PaymentToCategory
 import com.lorenzo.mobilecomputinghw.util.viewModelProviderFactoryOf
 import com.lorenzo.mobilecomputinghw.R
 import com.lorenzo.mobilecomputinghw.ui.home.HomeViewModel
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun CategoryReminder(
     viewModel: HomeViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController,
 ) {
     val viewState by viewModel.state.collectAsState()
 
     Column(modifier = modifier) {
         ReminderList(
-            list = viewState.reminders
+            list = viewState.reminders,
+            viewmodel = viewModel,
+            navController = navController
         )
     }
 }
 
 @Composable
 private fun ReminderList(
-    list: List<Reminder>
+    list: List<Reminder>,
+    viewmodel: HomeViewModel,
+    navController: NavController,
 ) {
     LazyColumn(
         contentPadding = PaddingValues(0.dp),
@@ -60,9 +71,10 @@ private fun ReminderList(
         items(list) { item ->
             ReminderListItem(
                 reminder = item,
-                //category = item.category,
+                viewmodel = viewmodel,
                 onClick = {},
                 modifier = Modifier.fillParentMaxWidth(),
+                navController = navController,
             )
         }
     }
@@ -72,12 +84,13 @@ private fun ReminderList(
 @Composable
 private fun ReminderListItem(
     reminder: Reminder,
-    //category: Category,
+    viewmodel: HomeViewModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    navController: NavController,
 ) {
     ConstraintLayout(modifier = modifier.clickable { onClick() }) {
-        val (divider, remainderMessage, paymentCategory, icon, date) = createRefs()
+        val (divider, remainderMessage, paymentCategory, iconEdit, iconDelete, date) = createRefs()
         Divider(
             Modifier.constrainAs(divider) {
                 top.linkTo(parent.top)
@@ -85,6 +98,8 @@ private fun ReminderListItem(
                 width = Dimension.fillToConstraints
             }
         )
+
+        val coroutineScope = rememberCoroutineScope()
 
         // message
         Text(
@@ -94,7 +109,7 @@ private fun ReminderListItem(
             modifier = Modifier.constrainAs(remainderMessage) {
                 linkTo(
                     start = parent.start,
-                    end = icon.start,
+                    end = iconDelete.start,
                     startMargin = 24.dp,
                     endMargin = 16.dp,
                     bias = 0f // float this towards the start. this was is the fix we needed
@@ -133,7 +148,7 @@ private fun ReminderListItem(
             modifier = Modifier.constrainAs(date) {
                 linkTo(
                     start = paymentCategory.end,
-                    end = icon.start,
+                    end = iconDelete.start,
                     startMargin = 8.dp,
                     endMargin = 16.dp,
                     bias = 0f // float this towards the start. this was is the fix we needed
@@ -144,23 +159,47 @@ private fun ReminderListItem(
             }
         )
 
-        // icon
-        /*IconButton(
-            onClick = { /*TODO*/ },
+        // icon edit
+        IconButton(
+            onClick = {
+                navController.navigate(route = "editReminder/${reminder.reminderId}")
+                      },
             modifier = Modifier
                 .size(50.dp)
                 .padding(6.dp)
-                .constrainAs(icon) {
+                .constrainAs(iconEdit) {
                     top.linkTo(parent.top, 10.dp)
                     bottom.linkTo(parent.bottom, 10.dp)
-                    end.linkTo(parent.end)
+                    end.linkTo(parent.end, 70.dp)
                 }
         ) {
             Icon(
-                imageVector = Icons.Filled.Check,
-                contentDescription = stringResource(R.string.check_mark)
+                imageVector = Icons.Filled.Edit,
+                contentDescription = stringResource(R.string.edit)
             )
-        }*/
+        }
+
+        //Icon Delete
+        IconButton(
+            onClick = {
+                coroutineScope.launch {
+                    viewmodel.deleteReminder(reminder.reminderId)
+                }
+            },
+            modifier = Modifier
+                .size(50.dp)
+                .padding(6.dp)
+                .constrainAs(iconDelete) {
+                    top.linkTo(parent.top, 10.dp)
+                    bottom.linkTo(parent.bottom, 10.dp)
+                    end.linkTo(parent.end, 5.dp)
+                }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Delete,
+                contentDescription = stringResource(R.string.delete)
+            )
+        }
     }
 }
 

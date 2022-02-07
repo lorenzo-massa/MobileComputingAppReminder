@@ -33,4 +33,7 @@ abstract class ReminderDao {
 
     @Query("SELECT * FROM reminders LIMIT 15")
     abstract fun reminders(): Flow<List<Reminder>>
+
+    @Query("DELETE FROM reminders WHERE id = :reminderId")
+    abstract suspend fun deleteById(reminderId: Long)
 }

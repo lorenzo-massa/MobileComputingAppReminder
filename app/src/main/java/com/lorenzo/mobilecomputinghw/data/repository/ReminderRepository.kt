@@ -25,4 +25,7 @@ class ReminderRepository(
      */
     suspend fun addReminder(reminder: Reminder) = reminderDao.insert(reminder)
     fun reminders(): Flow<List<Reminder>> = reminderDao.reminders()
+    suspend fun removeReminderById(id: Long) = reminderDao.deleteById(id)
+    suspend fun updateReminder(reminder: Reminder) = reminderDao.update(reminder)
+
 }

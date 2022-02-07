@@ -1,7 +1,6 @@
 package com.lorenzo.mobilecomputinghw.ui.home
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,10 +16,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.lorenzo.mobilecomputinghw.data.entity.Category
 import com.google.accompanist.insets.systemBarsPadding
 import com.lorenzo.mobilecomputinghw.R
-import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.data.entity.User
 import com.lorenzo.mobilecomputinghw.ui.home.categoryPayment.CategoryReminder
 import kotlinx.coroutines.launch
@@ -30,7 +27,6 @@ import kotlinx.coroutines.launch
 fun Home(
     viewModel: HomeViewModel = viewModel(),
     navController: NavController,
-    userLogged: String?,
     idLogged: Long?
 ) {
 
@@ -52,7 +48,6 @@ fun Home(
                     //selectedCategory = selectedCategory,
                     //categories = viewState.categories,
                     //onCategorySelected = viewModel::onCategorySelected,
-                    reminders = viewState.reminders,
                     navController = navController,
                     user = user
                 )
@@ -67,7 +62,6 @@ fun HomeContent(
     //selectedCategory: Category,
     //categories: List<Category>,
     //onCategorySelected: (Category) -> Unit,
-    reminders: List<Reminder>,
     navController: NavController,
     user: User
 ) {
@@ -108,7 +102,7 @@ fun HomeContent(
             CategoryReminder(
                 viewModel(),
                 modifier = Modifier.fillMaxSize(),
-                //categoryId = selectedCategory.id
+                navController = navController
             )
         }
     }
@@ -181,6 +175,16 @@ private fun HomeAppBar(
     )
 }
 
+
+fun getUser(viewState: HomeViewState, idLogged: Long?): User? {
+
+    viewState.users.forEach(){
+        if (it.id == idLogged )
+            return it
+    }
+    return null
+}
+/*
 @Composable
 private fun CategoryTabs(
     categories: List<Category>,
@@ -236,12 +240,4 @@ private fun ChoiceChipContent(
 }
 
 private val emptyTabIndicator: @Composable (List<TabPosition>) -> Unit = {}
-
-fun getUser(viewState: HomeViewState, idLogged: Long?): User? {
-
-    viewState.users.forEach(){
-        if (it.id == idLogged )
-            return it
-    }
-    return null
-}
+ */
