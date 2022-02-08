@@ -1,5 +1,9 @@
 package com.lorenzo.mobilecomputinghw.ui.reminder
 
+import android.content.Context
+import android.content.Intent
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,20 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +21,19 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
+import java.util.*
+
+import android.widget.Toast
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat.startActivityForResult
+import com.lorenzo.mobilecomputinghw.ui.MainActivity
+
 
 @Composable
 fun Reminder(
@@ -39,7 +44,9 @@ fun Reminder(
     val coroutineScope = rememberCoroutineScope()
     val message = rememberSaveable { mutableStateOf("") }
     //val category = rememberSaveable { mutableStateOf("") }
-    val amount = rememberSaveable { mutableStateOf("") }
+    //val amount = rememberSaveable { mutableStateOf("") }
+
+    val context = LocalContext.current
 
     Surface {
         Column(
@@ -76,6 +83,25 @@ fun Reminder(
                 )*/
 
                 Spacer(modifier = Modifier.height(10.dp))
+
+                Button(
+                    onClick = {
+
+                              },
+                    modifier = Modifier.clip(RoundedCornerShape(10.dp))
+                ) {
+                    Text(
+                        text = "Talk",
+                        fontSize = 20.sp,
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp, vertical = 5.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+
+
                 Button(
                     enabled = true,
                     onClick = {
@@ -100,6 +126,7 @@ fun Reminder(
                 ) {
                     Text("Save reminder")
                 }
+
             }
         }
     }
@@ -154,3 +181,4 @@ private fun getCategoryId(categories: List<Category>, categoryName: String): Lon
         }
     }
 }*/
+

@@ -1,5 +1,6 @@
 package com.lorenzo.mobilecomputinghw.ui.editReminder
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,19 +27,28 @@ import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
+import com.lorenzo.mobilecomputinghw.util.viewModelProviderFactoryOf
 
 @Composable
 fun EditReminder(
     onBackPress: () -> Unit,
-    viewModel: EditReminderViewModel = viewModel(),
     reminderId: Long
 ) {
-    val viewState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    val reminder: Reminder = getReminder(viewState, reminderId)
+    Log.d("Debug", reminderId.toString())
 
-    val message = rememberSaveable { mutableStateOf(reminder.message) }
+    val viewModel: EditReminderViewModel = viewModel(
+        key = "reminder_id_$reminderId",
+        factory = viewModelProviderFactoryOf { EditReminderViewModel(reminderId) }
+    )
+    val viewState by viewModel.state.collectAsState()
+
+    //val reminder: Reminder = viewModel.getReminder(reminderId)
+
+
+    //val message = rememberSaveable { mutableStateOf(viewState.reminder?.message) }
+    var message = viewState.reminder?.message ?: ""
 
     Surface {
         Column(
@@ -62,12 +72,13 @@ fun EditReminder(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier.padding(16.dp)
             ) {
-                OutlinedTextField(
-                    value = message.value,
-                    onValueChange = { message.value = it },
-                    label = { Text(text = "Reminder message")},
-                    modifier = Modifier.fillMaxWidth()
-                )
+                    OutlinedTextField(
+                        value = message,
+                        onValueChange = { message = it },
+                        label = { Text(text = "Reminder message")},
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
                 Spacer(modifier = Modifier.height(50.dp))
 
                 Button(
@@ -77,7 +88,7 @@ fun EditReminder(
                             viewModel.saveReminder(
                                 com.lorenzo.mobilecomputinghw.data.entity.Reminder(
                                     reminderId = reminderId,
-                                    message = message.value,
+                                    message = message,
                                     location_x = "",
                                     location_y = "",
                                     reminder_time = "",
@@ -100,20 +111,3 @@ fun EditReminder(
     }
 }
 
-fun getReminder(viewState: EditReminderViewState, id: Long): Reminder {
-
-    viewState.reminders.forEach(){
-        if (it.reminderId == id )
-            return it
-    }
-    return Reminder(
-        reminderId = 0,
-        message = "",
-        location_x = "",
-        location_y = "",
-        reminder_time = "",
-        creation_time = "",
-        creator_id = 0,
-        reminder_seen = 0,
-    )
-}

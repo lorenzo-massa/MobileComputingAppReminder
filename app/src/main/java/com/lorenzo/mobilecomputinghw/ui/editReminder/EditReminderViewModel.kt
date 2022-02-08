@@ -10,9 +10,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class EditReminderViewModel(
+    private val reminderId: Long,
     private val reminderRepository: ReminderRepository = Graph.reminderRepository,
 ): ViewModel() {
-    private val _state = MutableStateFlow(EditReminderViewState())
+    private val _state = MutableStateFlow(EditReminderViewState(null))
 
     val state: StateFlow<EditReminderViewState>
         get() = _state
@@ -21,16 +22,15 @@ class EditReminderViewModel(
         return reminderRepository.updateReminder(reminder)
     }
 
-
     init {
         viewModelScope.launch {
-            reminderRepository.reminders().collect { reminders ->
-                _state.value = EditReminderViewState(reminders)
+            reminderRepository.getReminder(reminderId).apply {
+                _state.value = EditReminderViewState(this)
             }
         }
     }
 }
 
 data class EditReminderViewState(
-    val reminders: List<Reminder> = emptyList()
+    val reminder: Reminder?
 )
