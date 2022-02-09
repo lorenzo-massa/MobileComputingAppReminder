@@ -20,40 +20,36 @@ import com.google.accompanist.insets.systemBarsPadding
 import com.lorenzo.mobilecomputinghw.R
 import com.lorenzo.mobilecomputinghw.data.entity.User
 import com.lorenzo.mobilecomputinghw.ui.home.categoryPayment.CategoryReminder
+import com.lorenzo.mobilecomputinghw.util.viewModelProviderFactoryOf
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun Home(
-    viewModel: HomeViewModel = viewModel(),
     navController: NavController,
-    idLogged: Long?
+    idLogged: Long
 ) {
+    val viewModel: HomeViewModel = viewModel(
+        key = "id_$idLogged",
+        factory = viewModelProviderFactoryOf { HomeViewModel(idLogged) }
+    )
 
     val viewState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    coroutineScope.launch {
-        viewModel.updateUsers()
-    }
+    viewModel.updateUser()
 
-    val user: User? = getUser(viewState, idLogged)
+    val user = viewState.user
 
-    //val selectedCategory = viewState.selectedCategory
-
-    //if (viewState.categories.isNotEmpty() && selectedCategory != null) {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            if (user != null) {
-                HomeContent(
-                    //selectedCategory = selectedCategory,
-                    //categories = viewState.categories,
-                    //onCategorySelected = viewModel::onCategorySelected,
-                    navController = navController,
-                    user = user
-                )
-            }
+    Surface(modifier = Modifier.fillMaxSize()) {
+        if (user != null) {
+            HomeContent(
+                viewModel,
+                navController = navController,
+                user = user
+            )
         }
-    //}
+    }
 }
 
 
@@ -62,6 +58,7 @@ fun HomeContent(
     //selectedCategory: Category,
     //categories: List<Category>,
     //onCategorySelected: (Category) -> Unit,
+    viewModel: HomeViewModel,
     navController: NavController,
     user: User
 ) {
@@ -100,7 +97,7 @@ fun HomeContent(
             )
             */
             CategoryReminder(
-                viewModel(),
+                viewModel,
                 modifier = Modifier.fillMaxSize(),
                 navController = navController
             )
@@ -176,14 +173,6 @@ private fun HomeAppBar(
 }
 
 
-fun getUser(viewState: HomeViewState, idLogged: Long?): User? {
-
-    viewState.users.forEach(){
-        if (it.id == idLogged )
-            return it
-    }
-    return null
-}
 /*
 @Composable
 private fun CategoryTabs(

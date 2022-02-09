@@ -1,5 +1,6 @@
 package com.lorenzo.mobilecomputinghw.ui.profile
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -19,8 +20,7 @@ import androidx.navigation.NavController
 import com.google.accompanist.insets.systemBarsPadding
 import com.lorenzo.mobilecomputinghw.data.entity.User
 import kotlinx.coroutines.launch
-import androidx.lifecycle.ViewModelProvider
-import com.lorenzo.mobilecomputinghw.ui.login.LoginViewState
+import com.lorenzo.mobilecomputinghw.util.viewModelProviderFactoryOf
 
 @Composable
 fun Profile(
@@ -28,13 +28,22 @@ fun Profile(
     navController: NavController,
     userLogged: String,
     idLogged: Long,
-    viewModel: ProfileViewModel = viewModel()
 ) {
+    val viewModel: ProfileViewModel = viewModel(
+        key = "id_$idLogged",
+        factory = viewModelProviderFactoryOf { ProfileViewModel(idLogged) }
+    )
+
     val viewState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    val userName = rememberSaveable { mutableStateOf(userLogged) }
-    val password = rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
+
+    val appUsername = viewState.user?.userName ?: ""
+
+    val userName = rememberSaveable { mutableStateOf("") }
+    userName.value = appUsername
+
+    val password = rememberSaveable { mutableStateOf("") }
 
     Surface {
         Column(
@@ -84,16 +93,24 @@ fun Profile(
                     onClick = {
                         if(checkProfile(userName,password)){
                             coroutineScope.launch {
-                                //TODO Check Username
-                                viewModel.saveUser(
-                                    User(
-                                        id = idLogged,
-                                        userName = userName.value,
-                                        password = password.value
+                                if(viewState.checkUsername(userName = userName))
+                                {
+                                    viewModel.saveUser(
+                                        User(
+                                            id = idLogged,
+                                            userName = userName.value,
+                                            password = password.value
+                                        )
                                     )
-                                )
+                                    onBackPress()
+                                }else{
+                                    Toast.makeText(
+                                        context,
+                                        "Username not available",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
-                            onBackPress()
                         }else{
                             Toast.makeText(
                                 context,
@@ -121,4 +138,6 @@ fun checkProfile(userName: MutableState<String>, password: MutableState<String>)
 
     return true
 }
+
+
 

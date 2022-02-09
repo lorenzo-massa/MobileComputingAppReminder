@@ -34,21 +34,30 @@ fun EditReminder(
     onBackPress: () -> Unit,
     reminderId: Long
 ) {
-    val coroutineScope = rememberCoroutineScope()
-
-    Log.d("Debug", reminderId.toString())
-
     val viewModel: EditReminderViewModel = viewModel(
         key = "reminder_id_$reminderId",
         factory = viewModelProviderFactoryOf { EditReminderViewModel(reminderId) }
     )
     val viewState by viewModel.state.collectAsState()
-
-    //val reminder: Reminder = viewModel.getReminder(reminderId)
-
+    val coroutineScope = rememberCoroutineScope()
 
     //val message = rememberSaveable { mutableStateOf(viewState.reminder?.message) }
-    var message = viewState.reminder?.message ?: ""
+    val appMessage = viewState.reminder?.message ?: ""
+    val message = rememberSaveable { mutableStateOf("") }
+    message.value = appMessage
+
+    val appLocationX = viewState.reminder?.location_x ?: ""
+    val locationX = rememberSaveable { mutableStateOf("") }
+    locationX.value = appLocationX
+
+    val appLocationY = viewState.reminder?.location_y ?: ""
+    val locationY = rememberSaveable { mutableStateOf("") }
+    locationY.value = appLocationY
+
+    val appReminderTime = viewState.reminder?.reminder_time ?: ""
+    val reminderTime = rememberSaveable { mutableStateOf("") }
+    reminderTime.value = appReminderTime
+
 
     Surface {
         Column(
@@ -72,12 +81,39 @@ fun EditReminder(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier.padding(16.dp)
             ) {
-                    OutlinedTextField(
-                        value = message,
-                        onValueChange = { message = it },
-                        label = { Text(text = "Reminder message")},
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                OutlinedTextField(
+                    value = message.value,
+                    onValueChange = { message.value = it },
+                    label = { Text(text = "Message")},
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedTextField(
+                    value = locationX.value,
+                    onValueChange = { locationX.value = it },
+                    label = { Text(text = "Location X")},
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedTextField(
+                    value = locationY.value,
+                    onValueChange = { locationY.value = it },
+                    label = { Text(text = "Location Y")},
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                OutlinedTextField(
+                    value = reminderTime.value,
+                    onValueChange = { reminderTime.value = it },
+                    label = { Text(text = "Reminder Time")},
+                    modifier = Modifier.fillMaxWidth()
+                )
 
                 Spacer(modifier = Modifier.height(50.dp))
 
@@ -88,13 +124,13 @@ fun EditReminder(
                             viewModel.saveReminder(
                                 com.lorenzo.mobilecomputinghw.data.entity.Reminder(
                                     reminderId = reminderId,
-                                    message = message,
-                                    location_x = "",
-                                    location_y = "",
-                                    reminder_time = "",
-                                    creation_time = "",
-                                    creator_id = 0,
-                                    reminder_seen = 0,
+                                    message = message.value,
+                                    location_x = locationX.value,
+                                    location_y = locationY.value,
+                                    reminder_time = reminderTime.value,
+                                    creation_time = viewState.reminder?.creation_time ?: "",
+                                    creator_id = viewState.reminder?.creator_id ?: 0,
+                                    reminder_seen = viewState.reminder?.reminder_seen ?: 0,
                                 )
                             )
                         }

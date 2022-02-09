@@ -13,5 +13,5 @@ class UserRepository(
 
     suspend fun updateUser(user: User) = userDao.update(user)
 
-    suspend fun getUser(username: String): User = userDao.getUser(username)
+    suspend fun getUser(id: Long): User = userDao.getUser(id)
 }

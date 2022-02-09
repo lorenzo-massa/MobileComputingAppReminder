@@ -32,7 +32,7 @@ fun MobileComputingApp(
                 val id = backStackEntry.arguments?.getLong("id")
             Home(
                 navController = appState.navController,
-                idLogged = id
+                idLogged = id ?: 0
             )
         }
         composable(route = "reminder") {
@@ -49,14 +49,12 @@ fun MobileComputingApp(
         ) { backStackEntry ->
             val userName = backStackEntry.arguments?.getString("userName") ?: ""
             val id = backStackEntry.arguments?.getLong("id")
-            if (id != null) {
-                Profile(
-                    onBackPress = appState::navigateBack,
-                    navController = appState.navController,
-                    userLogged = userName,
-                    idLogged = id
-                )
-            }
+            Profile(
+                onBackPress = appState::navigateBack,
+                navController = appState.navController,
+                userLogged = userName,
+                idLogged = id ?: 0
+            )
         }
         composable(route = "editReminder/{id}",
             arguments = listOf(
@@ -66,12 +64,10 @@ fun MobileComputingApp(
             )
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getLong("id")
-            if (id != null) {
-                EditReminder(
-                    onBackPress = appState::navigateBack,
-                    reminderId = id
-                )
-            }
+            EditReminder(
+                onBackPress = appState::navigateBack,
+                reminderId = id ?: 0
+            )
         }
     }
 }
