@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.R
 import kotlinx.coroutines.launch
@@ -90,7 +91,7 @@ private fun ReminderListItem(
     navController: NavController,
 ) {
     ConstraintLayout(modifier = modifier.clickable { onClick() }) {
-        val (divider, remainderMessage, locationX, locationY, iconEdit, iconDelete, date) = createRefs()
+        val (divider, reminderImage, remainderMessage, locationX, locationY, iconEdit, iconDelete, date) = createRefs()
 
         val viewState by viewModel.state.collectAsState()
 
@@ -104,20 +105,38 @@ private fun ReminderListItem(
 
         val coroutineScope = rememberCoroutineScope()
 
+        Image(painter = rememberImagePainter(Uri.parse(reminder.img_uri)),
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier.size(50.dp)
+                .constrainAs(reminderImage) {
+                linkTo(
+                    start = parent.start,
+                    end = remainderMessage.start,
+                    startMargin = 10.dp,
+                    endMargin = 10.dp,
+                    bias = 0f // float this towards the start. this was is the fix we needed
+                )
+                top.linkTo(parent.top, margin = 10.dp)
+                width = Dimension.preferredWrapContent
+            })
+
         // message
         Text(
             text = reminder.message,
             maxLines = 1,
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier.constrainAs(remainderMessage) {
-                linkTo(
-                    start = parent.start,
-                    end = iconDelete.start,
+                /*linkTo(
+                    start = reminderImage.start,
+                    end = parent.end,
                     startMargin = 24.dp,
-                    endMargin = 16.dp,
+                    endMargin = 2.dp,
                     bias = 0f // float this towards the start. this was is the fix we needed
-                )
+                )*/
                 top.linkTo(parent.top, margin = 10.dp)
+                start.linkTo(reminderImage.end, margin = 30.dp)
+
                 width = Dimension.preferredWrapContent
             }
         )
@@ -143,6 +162,7 @@ private fun ReminderListItem(
         )
         */
         // date
+
         Text(
             text = "Time: " +reminder.reminder_time,
             maxLines = 1,
@@ -151,13 +171,13 @@ private fun ReminderListItem(
             modifier = Modifier.constrainAs(date) {
                 linkTo(
                     start = parent.start,
-                    end = iconEdit.start,
+                    end = parent.end,
                     startMargin = 24.dp,
                     endMargin = 24.dp,
                     bias = 0f // float this towards the start. this was is the fix we needed
                 )
                 //centerVerticallyTo(paymentCategory)
-                top.linkTo(remainderMessage.bottom, 6.dp)
+                top.linkTo(reminderImage.bottom, 6.dp)
                 bottom.linkTo(parent.bottom, 10.dp)
             }
         )
@@ -175,7 +195,7 @@ private fun ReminderListItem(
                     bias = 0f // float this towards the start. this was is the fix we needed
                 )
                 //centerVerticallyTo(paymentCategory)
-                top.linkTo(remainderMessage.bottom, 6.dp)
+                top.linkTo(reminderImage.bottom, 6.dp)
                 bottom.linkTo(parent.bottom, 10.dp)
             }
         )
@@ -193,7 +213,7 @@ private fun ReminderListItem(
                     bias = 0f // float this towards the start. this was is the fix we needed
                 )
                 //centerVerticallyTo(paymentCategory)
-                top.linkTo(remainderMessage.bottom, 6.dp)
+                top.linkTo(reminderImage.bottom, 6.dp)
                 bottom.linkTo(parent.bottom, 10.dp)
             }
         )
@@ -209,7 +229,7 @@ private fun ReminderListItem(
                 .constrainAs(iconEdit) {
                     top.linkTo(parent.top, 10.dp)
                     bottom.linkTo(parent.bottom, 10.dp)
-                    end.linkTo(parent.end, 70.dp)
+                    end.linkTo(iconDelete.start, 5.dp)
                 }
         ) {
             Icon(
@@ -239,6 +259,8 @@ private fun ReminderListItem(
                 contentDescription = stringResource(R.string.delete)
             )
         }
+
+
     }
 }
 

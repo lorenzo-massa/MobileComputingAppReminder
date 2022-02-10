@@ -9,6 +9,9 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -22,17 +25,23 @@ import kotlinx.coroutines.launch
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import coil.compose.rememberImagePainter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.lorenzo.mobilecomputinghw.BuildConfig
+import dev.chrisbanes.accompanist.glide.GlideImage
 
+
+
+var imageUriState = mutableStateOf<Uri?>(null)
 @ExperimentalPermissionsApi
 @Composable
 fun Reminder(
     onBackPress: () -> Unit,
     viewModel: ReminderViewModel = viewModel()
 ) {
-    val viewState by viewModel.state.collectAsState()
+    //val viewState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val message = rememberSaveable { mutableStateOf("") }
     val locationX = rememberSaveable { mutableStateOf("") }
@@ -41,6 +50,7 @@ fun Reminder(
     message.value = viewModel.textFromSpeech ?: ""
 
     var clickToShowPermission by rememberSaveable { mutableStateOf("F") }
+
 
 
     val context = LocalContext.current
@@ -132,10 +142,9 @@ fun Reminder(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                val uri = imageUriState.value
 
-                Spacer(modifier = Modifier.height(50.dp))
-
-
+                PhotoSelector()
 
                 Button(
                     enabled = true,
@@ -150,7 +159,7 @@ fun Reminder(
                                     creation_time = "",
                                     creator_id = 0,
                                     reminder_seen = 0,
-                                    img_uri = ""
+                                    img_uri = uri.toString()
                                 )
                             )
                         }
@@ -203,7 +212,6 @@ fun startSpeechToText(vm: ReminderViewModel, ctx: Context, finished: ()-> Unit) 
         RecognizerIntent.LANGUAGE_MODEL_FREE_FORM,
     )
 
-    // Optionally I have added my mother language
     speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "el_EN")
 
     speechRecognizer.setRecognitionListener(object : RecognitionListener {
@@ -235,8 +243,7 @@ fun startSpeechToText(vm: ReminderViewModel, ctx: Context, finished: ()-> Unit) 
             val result = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
             if (result != null) {
                 vm.textFromSpeech = result[0]
-                Log.d("Speech to Text", "onResults")
-                Log.d("Speech to Text", result[0])
+                Log.d("Speech to Text", "onResult: "+result[0])
             }
         }
 
@@ -252,5 +259,37 @@ fun startSpeechToText(vm: ReminderViewModel, ctx: Context, finished: ()-> Unit) 
     })
     speechRecognizer.startListening(speechRecognizerIntent)
     Log.d("Speech to Text", "startListening")
+}
 
+@Composable
+fun PhotoSelector() {
+    Box(contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+            val selectImageLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent())  { uri ->
+                imageUriState.value = uri
+            }
+
+            if (imageUriState.value != null) {
+                //GlideImage(data = imageUriState.value!!)
+                Image(
+                    painter = rememberImagePainter(
+                        imageUriState.value
+                    ),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .size(64.dp)
+                )
+            }
+
+            Button(
+                onClick = { selectImageLauncher.launch("image/*") },
+                modifier = Modifier.padding(vertical = 8.dp)
+            ) {
+                Text("Open Gallery")
+            }
+
+        }
+    }
 }
