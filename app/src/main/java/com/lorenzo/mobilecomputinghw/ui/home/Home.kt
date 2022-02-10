@@ -1,6 +1,7 @@
 package com.lorenzo.mobilecomputinghw.ui.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -14,14 +15,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.insets.systemBarsPadding
 import com.lorenzo.mobilecomputinghw.R
 import com.lorenzo.mobilecomputinghw.data.entity.User
-import com.lorenzo.mobilecomputinghw.ui.home.categoryPayment.CategoryReminder
 import com.lorenzo.mobilecomputinghw.util.viewModelProviderFactoryOf
-import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -66,7 +66,9 @@ fun HomeContent(
         modifier = Modifier.padding(bottom = 24.dp),
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(route = "reminder") },
+                onClick = {
+                    navController.navigate(route = "reminder")
+                          },
                 contentColor = Color.White,
                 modifier = Modifier.padding(all = 20.dp)
             ) {
@@ -97,7 +99,7 @@ fun HomeContent(
             )
             */
             CategoryReminder(
-                viewModel,
+                viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
                 navController = navController
             )

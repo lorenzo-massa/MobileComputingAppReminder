@@ -1,6 +1,7 @@
 package com.lorenzo.mobilecomputinghw.ui.editReminder
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -22,6 +24,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
@@ -115,6 +119,17 @@ fun EditReminder(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                /*Image(
+                    painter = rememberImagePainter(
+                        data = viewState.reminder?.img_uri ?: ""
+                    ),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(64.dp)
+                )*/
+
                 Spacer(modifier = Modifier.height(50.dp))
 
                 Button(
@@ -131,6 +146,7 @@ fun EditReminder(
                                     creation_time = viewState.reminder?.creation_time ?: "",
                                     creator_id = viewState.reminder?.creator_id ?: 0,
                                     reminder_seen = viewState.reminder?.reminder_seen ?: 0,
+                                    img_uri = viewState.reminder?.img_uri ?: ""
                                 )
                             )
                         }

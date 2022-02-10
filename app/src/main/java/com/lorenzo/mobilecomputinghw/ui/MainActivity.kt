@@ -9,26 +9,20 @@ import android.speech.SpeechRecognizer
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.app.ActivityCompat
-import androidx.room.util.TableInfo
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.lorenzo.mobilecomputinghw.ui.theme.MobileComputingHWTheme
 import java.util.*
 
+@ExperimentalPermissionsApi
 class MainActivity : ComponentActivity() {
 
     private var talk by mutableStateOf("Speech text should come here")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +33,16 @@ class MainActivity : ComponentActivity() {
                     MobileComputingApp()
                 }
             }
+        }
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 102 && resultCode == Activity.RESULT_OK) {
+            val result = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            talk = result?.get(0).toString()
         }
     }
 }

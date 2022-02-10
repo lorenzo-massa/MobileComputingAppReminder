@@ -1,5 +1,10 @@
-package com.lorenzo.mobilecomputinghw.ui.home.categoryPayment
+package com.lorenzo.mobilecomputinghw.ui.home
 
+import android.net.Uri
+import android.provider.MediaStore
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,35 +13,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.lorenzo.mobilecomputinghw.data.entity.Category
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
-import com.lorenzo.mobilecomputinghw.data.room.PaymentToCategory
-import com.lorenzo.mobilecomputinghw.util.viewModelProviderFactoryOf
 import com.lorenzo.mobilecomputinghw.R
-import com.lorenzo.mobilecomputinghw.ui.home.HomeViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -71,7 +71,7 @@ private fun ReminderList(
         items(list) { item ->
             ReminderListItem(
                 reminder = item,
-                viewmodel = viewmodel,
+                viewModel = viewmodel,
                 onClick = {},
                 modifier = Modifier.fillParentMaxWidth(),
                 navController = navController,
@@ -84,13 +84,16 @@ private fun ReminderList(
 @Composable
 private fun ReminderListItem(
     reminder: Reminder,
-    viewmodel: HomeViewModel,
+    viewModel: HomeViewModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavController,
 ) {
     ConstraintLayout(modifier = modifier.clickable { onClick() }) {
-        val (divider, remainderMessage, paymentCategory, iconEdit, iconDelete, date) = createRefs()
+        val (divider, remainderMessage, locationX, locationY, iconEdit, iconDelete, date) = createRefs()
+
+        val viewState by viewModel.state.collectAsState()
+
         Divider(
             Modifier.constrainAs(divider) {
                 top.linkTo(parent.top)
@@ -141,25 +144,61 @@ private fun ReminderListItem(
         */
         // date
         Text(
-            text = reminder.reminder_time,
+            text = "Time: " +reminder.reminder_time,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.caption,
             modifier = Modifier.constrainAs(date) {
                 linkTo(
-                    start = paymentCategory.end,
-                    end = iconDelete.start,
-                    startMargin = 8.dp,
-                    endMargin = 16.dp,
+                    start = parent.start,
+                    end = iconEdit.start,
+                    startMargin = 24.dp,
+                    endMargin = 24.dp,
                     bias = 0f // float this towards the start. this was is the fix we needed
                 )
-                centerVerticallyTo(paymentCategory)
+                //centerVerticallyTo(paymentCategory)
+                top.linkTo(remainderMessage.bottom, 6.dp)
+                bottom.linkTo(parent.bottom, 10.dp)
+            }
+        )
+        Text(
+            text = "X: " +reminder.location_x,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.constrainAs(locationX) {
+                linkTo(
+                    start = date.start,
+                    end = iconEdit.start,
+                    startMargin = 100.dp,
+                    endMargin = 24.dp,
+                    bias = 0f // float this towards the start. this was is the fix we needed
+                )
+                //centerVerticallyTo(paymentCategory)
+                top.linkTo(remainderMessage.bottom, 6.dp)
+                bottom.linkTo(parent.bottom, 10.dp)
+            }
+        )
+        Text(
+            text = "Y: " +reminder.location_y,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.constrainAs(locationY) {
+                linkTo(
+                    start = locationX.start,
+                    end = iconEdit.start,
+                    startMargin = 50.dp,
+                    endMargin = 24.dp,
+                    bias = 0f // float this towards the start. this was is the fix we needed
+                )
+                //centerVerticallyTo(paymentCategory)
                 top.linkTo(remainderMessage.bottom, 6.dp)
                 bottom.linkTo(parent.bottom, 10.dp)
             }
         )
 
-        // icon edit
+        // Icon edit
         IconButton(
             onClick = {
                 navController.navigate(route = "editReminder/${reminder.reminderId}")
@@ -183,7 +222,7 @@ private fun ReminderListItem(
         IconButton(
             onClick = {
                 coroutineScope.launch {
-                    viewmodel.deleteReminder(reminder.reminderId)
+                    viewModel.deleteReminder(reminder.reminderId)
                 }
             },
             modifier = Modifier

@@ -1,5 +1,8 @@
 package com.lorenzo.mobilecomputinghw.ui.reminder
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lorenzo.mobilecomputinghw.Graph
@@ -13,6 +16,7 @@ class ReminderViewModel(
     private val reminderRepository: ReminderRepository = Graph.reminderRepository,
 ): ViewModel() {
     private val _state = MutableStateFlow(ReminderViewState())
+    var textFromSpeech: String? by mutableStateOf(null)
 
     val state: StateFlow<ReminderViewState>
         get() = _state
