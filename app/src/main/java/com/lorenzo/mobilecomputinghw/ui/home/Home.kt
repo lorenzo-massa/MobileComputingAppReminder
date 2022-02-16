@@ -1,7 +1,6 @@
 package com.lorenzo.mobilecomputinghw.ui.home
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -15,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.insets.systemBarsPadding
@@ -35,7 +33,7 @@ fun Home(
     )
 
     val viewState by viewModel.state.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
+    //val coroutineScope = rememberCoroutineScope()
 
     viewModel.updateUser()
 

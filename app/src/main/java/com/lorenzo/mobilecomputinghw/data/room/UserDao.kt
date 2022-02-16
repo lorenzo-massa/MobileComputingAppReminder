@@ -1,7 +1,6 @@
 package com.lorenzo.mobilecomputinghw.data.room
 
 import androidx.room.*
-import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.data.entity.User
 import kotlinx.coroutines.flow.Flow
 

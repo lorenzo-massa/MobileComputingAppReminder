@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.lorenzo.mobilecomputinghw.Graph
 import com.lorenzo.mobilecomputinghw.data.entity.User
 import com.lorenzo.mobilecomputinghw.data.repository.UserRepository
-import com.lorenzo.mobilecomputinghw.ui.editReminder.EditReminderViewState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

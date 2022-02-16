@@ -3,7 +3,6 @@ package com.lorenzo.mobilecomputinghw.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lorenzo.mobilecomputinghw.Graph
-import com.lorenzo.mobilecomputinghw.Graph.reminderRepository
 import com.lorenzo.mobilecomputinghw.Graph.userRepository
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.data.entity.User

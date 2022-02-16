@@ -1,15 +1,11 @@
 package com.lorenzo.mobilecomputinghw.ui.home
 
 import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -23,7 +19,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -66,13 +61,15 @@ private fun ReminderList(
         verticalArrangement = Arrangement.Center
     ) {
         items(list) { item ->
-            ReminderListItem(
-                reminder = item,
-                viewModel = viewmodel,
-                onClick = {},
-                modifier = Modifier.fillParentMaxWidth(),
-                navController = navController,
-            )
+            if(item.reminder_seen.toInt() == 1){
+                ReminderListItem(
+                    reminder = item,
+                    viewModel = viewmodel,
+                    onClick = {},
+                    modifier = Modifier.fillParentMaxWidth(),
+                    navController = navController,
+                )
+            }
         }
     }
 }

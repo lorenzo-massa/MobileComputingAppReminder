@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.lorenzo.mobilecomputinghw.data.entity.Category
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import kotlinx.coroutines.flow.Flow
 
@@ -36,4 +35,7 @@ abstract class ReminderDao {
 
     @Query("DELETE FROM reminders WHERE id = :reminderId")
     abstract suspend fun deleteById(reminderId: Long)
+
+    @Query("UPDATE reminders SET reminder_seen=1 WHERE id = :reminderId")
+    abstract suspend fun updateSeen(reminderId: Long)
 }

@@ -1,12 +1,8 @@
 package com.lorenzo.mobilecomputinghw.data.entity
 
-import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.lorenzo.mobilecomputinghw.data.entity.Category
 
 //Message, location_x, location_y, reminder_time, creation_time, creator_id, reminder_seen
 
@@ -28,7 +24,7 @@ import com.lorenzo.mobilecomputinghw.data.entity.Category
 )
 
 data class Reminder(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val reminderId: Long = 0,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var reminderId: Long = 0,
     @ColumnInfo(name = "message") val message: String,
     @ColumnInfo(name = "location_x") val location_x: String,
     @ColumnInfo(name = "location_y") val location_y: String,

@@ -1,9 +1,7 @@
 package com.lorenzo.mobilecomputinghw.data.repository
 
-import com.lorenzo.mobilecomputinghw.data.entity.Category
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.data.room.ReminderDao
-import com.lorenzo.mobilecomputinghw.data.room.PaymentToCategory
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -23,10 +21,14 @@ class ReminderRepository(
     /**
      * Add a new [Reminder] to the payment store
      */
-    suspend fun addReminder(reminder: Reminder) = reminderDao.insert(reminder)
+    suspend fun addReminder(reminder: Reminder): Long {
+        return reminderDao.insert(reminder)
+    }
     fun reminders(): Flow<List<Reminder>> = reminderDao.reminders()
     suspend fun removeReminderById(id: Long) = reminderDao.deleteById(id)
     suspend fun updateReminder(reminder: Reminder) = reminderDao.update(reminder)
     suspend fun getReminder(id: Long) = reminderDao.reminder(id)
+    suspend fun updateSeen(id: Long) = reminderDao.updateSeen(id)
+
 
 }

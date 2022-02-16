@@ -13,6 +13,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -27,11 +28,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import coil.compose.rememberImagePainter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.lorenzo.mobilecomputinghw.BuildConfig
-import dev.chrisbanes.accompanist.glide.GlideImage
-
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 var imageUriState = mutableStateOf<Uri?>(null)
@@ -46,7 +48,12 @@ fun Reminder(
     val message = rememberSaveable { mutableStateOf("") }
     val locationX = rememberSaveable { mutableStateOf("") }
     val locationY = rememberSaveable { mutableStateOf("") }
-    val reminderTime = rememberSaveable { mutableStateOf("") }
+    //val reminderTime = rememberSaveable { mutableStateOf("") }
+    val reminderHours = rememberSaveable { mutableStateOf("") }
+    val reminderMinutes = rememberSaveable { mutableStateOf("") }
+    val reminderSeconds = rememberSaveable { mutableStateOf("") }
+
+
     message.value = viewModel.textFromSpeech ?: ""
 
     var clickToShowPermission by rememberSaveable { mutableStateOf("F") }
@@ -122,7 +129,7 @@ fun Reminder(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 OutlinedTextField(
                     value = locationY.value,
@@ -131,14 +138,46 @@ fun Reminder(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                OutlinedTextField(
-                    value = reminderTime.value,
-                    onValueChange = { reminderTime.value = it },
-                    label = { Text(text = "Reminder Time")},
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    //horizontalArrangement  =  Arrangement.SpaceEvenly
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(0.3f)
+                    ) {
+                        OutlinedTextField(
+                            value = reminderHours.value,
+                            onValueChange = { reminderHours.value = it },
+                            label = { Text(text = "Hours")},
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(
+                        modifier = Modifier.fillMaxWidth(0.5f)
+                    ) {
+                        OutlinedTextField(
+                            value = reminderMinutes.value,
+                            onValueChange = { reminderMinutes.value = it },
+                            label = { Text(text = "Minutes")},
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(
+                        //modifier = Modifier.fillMaxWidth(0.3f)
+                    ) {
+                        OutlinedTextField(
+                            value = reminderSeconds.value,
+                            onValueChange = { reminderSeconds.value = it },
+                            label = { Text(text = "Seconds")},
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -155,8 +194,8 @@ fun Reminder(
                                     message = message.value,
                                     location_x = locationX.value,
                                     location_y = locationY.value,
-                                    reminder_time = reminderTime.value,
-                                    creation_time = "",
+                                    reminder_time = (((reminderHours.value.toLong()*60)+reminderMinutes.value.toLong())*60+reminderSeconds.value.toLong()).toString(),
+                                    creation_time = Date().time.toString(),
                                     creator_id = 0,
                                     reminder_seen = 0,
                                     img_uri = uri.toString()
@@ -292,4 +331,13 @@ fun PhotoSelector() {
 
         }
     }
+}
+
+private fun Date.formatToString(): String {
+    return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(this)
+}
+
+private fun Long.toDateString(): String {
+    return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(Date(this))
+
 }

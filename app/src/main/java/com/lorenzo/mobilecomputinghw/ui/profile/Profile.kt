@@ -1,6 +1,5 @@
 package com.lorenzo.mobilecomputinghw.ui.profile
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -134,7 +133,7 @@ fun Profile(
 fun checkProfile(userName: MutableState<String>, password: MutableState<String>): Boolean {
 
     if(userName.value.isBlank() || password.value.isBlank())
-        return false;
+        return false
 
     return true
 }

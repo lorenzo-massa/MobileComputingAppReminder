@@ -1,8 +1,6 @@
 package com.lorenzo.mobilecomputinghw.ui.login
 
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -75,8 +73,7 @@ fun Login(
             Button(
                 onClick ={
                     if(checkLogin(viewState,username,password)) {
-                        var id: Long
-                        id = getId(viewState, username)
+                        val id: Long = getId(viewState, username)
                         navController.navigate(route = "home/${id}")
                     }
                     else
@@ -134,60 +131,40 @@ fun Login(
 
 }
 
-@Composable
-fun toastDemo() {
-    val context = LocalContext.current
-    Column(
-        content = {
-            Button(onClick = {
-                Toast.makeText(
-                    context,
-                    "Showing toast....",
-                    Toast.LENGTH_LONG
-                ).show()
-            }, content = {
-                Text(text = "Show Toast")
-            })
-        }, modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    )
-}
-
 fun checkLogin(viewState: LoginViewState, userName: MutableState<String>, password: MutableState<String>): Boolean {
-    var found = false;
+    var found = false
 
     if(userName.value.isBlank() || password.value.isBlank())
-        return false;
+        return false
 
-    viewState.users.forEach(){
+    viewState.users.forEach {
         if (it.userName == userName.value && it.password == password.value)
-            found = true;
+            found = true
     }
 
     return found
 }
 
 fun checkRegistration(viewState: LoginViewState, userName: MutableState<String>, password: MutableState<String>): Boolean {
-    var found = false;
+    var found = false
 
     if(userName.value.isBlank() || password.value.isBlank())
-        return false;
+        return false
 
-    viewState.users.forEach(){
+    viewState.users.forEach{
         if (it.userName == userName.value)
-            found = true;
+            found = true
     }
 
     if(found)
-        return false;
+        return false
 
-    return true;
+    return true
 }
 
 fun getId(viewState: LoginViewState, userName: MutableState<String>) : Long {
 
-    viewState.users.forEach(){
+    viewState.users.forEach{
         if (it.userName == userName.value )
             return it.id
     }
