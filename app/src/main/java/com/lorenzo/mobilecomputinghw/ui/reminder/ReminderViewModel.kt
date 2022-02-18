@@ -41,16 +41,18 @@ class ReminderViewModel(
         get() = _state
 
     @ExperimentalPermissionsApi
-    suspend fun saveReminder(reminder: Reminder): Long {
+    suspend fun saveReminder(reminder: Reminder, notificationEnabled: Boolean): Long {
         val id =  reminderRepository.addReminder(reminder)
         reminder.reminderId = id
-        reminderNotification(reminder)
+        if(notificationEnabled){
+            reminderNotification(reminder)
+        }
         return id
     }
 
     init {
         createNotificationChannel(context = Graph.appContext)
-        setOneTimeNotification()
+        //setOneTimeNotification()
         viewModelScope.launch {
             reminderRepository.reminders().collect { reminders ->
                 _state.value = ReminderViewState(reminders)

@@ -34,6 +34,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.lorenzo.mobilecomputinghw.BuildConfig
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.compose.foundation.lazy.LazyColumn
+
 
 
 var imageUriState = mutableStateOf<Uri?>(null)
@@ -52,15 +54,17 @@ fun Reminder(
     val reminderHours = rememberSaveable { mutableStateOf("") }
     val reminderMinutes = rememberSaveable { mutableStateOf("") }
     val reminderSeconds = rememberSaveable { mutableStateOf("") }
+    val checkedStateNotification = remember { mutableStateOf(true) }
 
 
-    message.value = viewModel.textFromSpeech ?: ""
+    message.value = viewModel.textFromSpeech ?: message.value
 
     var clickToShowPermission by rememberSaveable { mutableStateOf("F") }
 
 
 
     val context = LocalContext.current
+
 
 
     Surface {
@@ -112,8 +116,13 @@ fun Reminder(
                     enabled = true,
                     onClick = {clickToShowPermission = "T"},
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .size(55.dp)
+                        .fillMaxWidth(),
+                    contentPadding = PaddingValues(
+                        start = 20.dp,
+                        top = 12.dp,
+                        end = 20.dp,
+                        bottom = 12.dp
+                )
                 ) {
                     Text("Speech to Text", color = Color.White)
                 }
@@ -139,45 +148,64 @@ fun Reminder(
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Notification: ",
+                    )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    //horizontalArrangement  =  Arrangement.SpaceEvenly
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(0.3f)
-                    ) {
-                        OutlinedTextField(
-                            value = reminderHours.value,
-                            onValueChange = { reminderHours.value = it },
-                            label = { Text(text = "Hours")},
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        )
-                    }
                     Spacer(modifier = Modifier.width(10.dp))
-                    Column(
-                        modifier = Modifier.fillMaxWidth(0.5f)
-                    ) {
-                        OutlinedTextField(
-                            value = reminderMinutes.value,
-                            onValueChange = { reminderMinutes.value = it },
-                            label = { Text(text = "Minutes")},
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Column(
-                        //modifier = Modifier.fillMaxWidth(0.3f)
-                    ) {
-                        OutlinedTextField(
-                            value = reminderSeconds.value,
-                            onValueChange = { reminderSeconds.value = it },
-                            label = { Text(text = "Seconds")},
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
 
+                    Switch(
+                        checked = checkedStateNotification.value,
+                        onCheckedChange = { checkedStateNotification.value = it },
+                        modifier = Modifier.padding(
+                            start = 50.dp
                         )
+                    )
+                }
+
+
+                if (checkedStateNotification.value){
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        //horizontalArrangement  =  Arrangement.SpaceEvenly
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(0.3f)
+                        ) {
+                            OutlinedTextField(
+                                value = reminderHours.value,
+                                onValueChange = { reminderHours.value = it },
+                                label = { Text(text = "Hours")},
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column(
+                            modifier = Modifier.fillMaxWidth(0.5f)
+                        ) {
+                            OutlinedTextField(
+                                value = reminderMinutes.value,
+                                onValueChange = { reminderMinutes.value = it },
+                                label = { Text(text = "Minutes")},
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column(
+                            //modifier = Modifier.fillMaxWidth(0.3f)
+                        ) {
+                            OutlinedTextField(
+                                value = reminderSeconds.value,
+                                onValueChange = { reminderSeconds.value = it },
+                                label = { Text(text = "Seconds")},
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+
+                                )
+                        }
                     }
                 }
+
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -185,10 +213,28 @@ fun Reminder(
 
                 PhotoSelector()
 
+                Spacer(modifier = Modifier.height(10.dp))
+
                 Button(
                     enabled = true,
                     onClick = {
                         coroutineScope.launch {
+                            if(reminderHours.value == ""){
+                                reminderHours.value = "0"
+                            }
+                            if(reminderMinutes.value == ""){
+                                reminderMinutes.value = "0"
+                            }
+                            if(reminderSeconds.value == ""){
+                                reminderSeconds.value = "0"
+                            }
+                            val seen: Long = if(checkedStateNotification.value){
+                                0
+                            }else{
+                                1
+                            }
+
+
                             viewModel.saveReminder(
                                 com.lorenzo.mobilecomputinghw.data.entity.Reminder(
                                     message = message.value,
@@ -197,16 +243,20 @@ fun Reminder(
                                     reminder_time = (((reminderHours.value.toLong()*60)+reminderMinutes.value.toLong())*60+reminderSeconds.value.toLong()).toString(),
                                     creation_time = Date().time.toString(),
                                     creator_id = 0,
-                                    reminder_seen = 0,
+                                    reminder_seen = seen,
                                     img_uri = uri.toString()
-                                )
+                                ), checkedStateNotification.value
                             )
                         }
                         onBackPress()
                     },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .size(55.dp)
+                        .fillMaxWidth(),
+                    contentPadding = PaddingValues(
+                        start = 20.dp,
+                        top = 12.dp,
+                        end = 20.dp,
+                        bottom = 12.dp)
                 ) {
                     Text("Save reminder")
                 }
@@ -324,7 +374,11 @@ fun PhotoSelector() {
 
             Button(
                 onClick = { selectImageLauncher.launch("image/*") },
-                modifier = Modifier.padding(vertical = 8.dp)
+                contentPadding = PaddingValues(
+                    start = 20.dp,
+                    top = 12.dp,
+                    end = 20.dp,
+                    bottom = 12.dp)
             ) {
                 Text("Open Gallery")
             }

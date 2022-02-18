@@ -13,7 +13,7 @@ class NotificationWorker(
 
     override fun doWork(): Result {
         return try {
-            for (i in 0..10) {
+            for (i in 1..5) {
                 Log.i("NotificationWorker", "Counted $i")
             }
             Result.success()
