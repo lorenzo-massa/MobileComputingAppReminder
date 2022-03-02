@@ -35,7 +35,8 @@ import com.lorenzo.mobilecomputinghw.BuildConfig
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.compose.foundation.lazy.LazyColumn
-
+import androidx.navigation.NavController
+import com.google.android.gms.maps.model.LatLng
 
 
 var imageUriState = mutableStateOf<Uri?>(null)
@@ -43,7 +44,8 @@ var imageUriState = mutableStateOf<Uri?>(null)
 @Composable
 fun Reminder(
     onBackPress: () -> Unit,
-    viewModel: ReminderViewModel = viewModel()
+    viewModel: ReminderViewModel = viewModel(),
+    navController: NavController
 ) {
     //val viewState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -61,10 +63,13 @@ fun Reminder(
 
     var clickToShowPermission by rememberSaveable { mutableStateOf("F") }
 
-
-
     val context = LocalContext.current
 
+    val latlng = navController
+        .currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<LatLng>("location_data")
+        ?.value
 
 
     Surface {
@@ -127,6 +132,21 @@ fun Reminder(
                     Text("Speech to Text", color = Color.White)
                 }
                 //------------------------------------------------
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                if (latlng == null) {
+                    OutlinedButton(
+                        onClick = { navController.navigate("map") },
+                        modifier = Modifier.height(55.dp)
+                    ) {
+                        Text(text = "Payment location")
+                    }
+                } else {
+                    Text(
+                        text = "Lat: ${latlng.latitude}, \nLng: ${latlng.longitude}"
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(10.dp))
 

@@ -11,6 +11,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.lorenzo.mobilecomputinghw.ui.editReminder.EditReminder
 import com.lorenzo.mobilecomputinghw.ui.home.Home
 import com.lorenzo.mobilecomputinghw.ui.login.Login
+import com.lorenzo.mobilecomputinghw.ui.map.ReminderLocationMap
 import com.lorenzo.mobilecomputinghw.ui.profile.Profile
 import com.lorenzo.mobilecomputinghw.ui.reminder.Reminder
 import kotlin.reflect.KFunction2
@@ -41,7 +42,10 @@ fun MobileComputingApp(
             )
         }
         composable(route = "reminder") {
-            Reminder(onBackPress = appState::navigateBack)
+            Reminder(onBackPress = appState::navigateBack, navController = appState.navController)
+        }
+        composable(route = "map") {
+            ReminderLocationMap(navController = appState.navController)
         }
         composable(route = "profile/{userName},{id}",
             arguments = listOf(
