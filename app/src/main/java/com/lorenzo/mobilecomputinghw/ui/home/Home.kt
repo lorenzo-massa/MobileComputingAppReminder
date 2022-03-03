@@ -1,12 +1,11 @@
 package com.lorenzo.mobilecomputinghw.ui.home
 
 import android.annotation.SuppressLint
+import android.inputmethodservice.Keyboard
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.insets.systemBarsPadding
+import com.google.android.gms.maps.model.LatLng
 import com.lorenzo.mobilecomputinghw.R
 import com.lorenzo.mobilecomputinghw.data.entity.User
 import com.lorenzo.mobilecomputinghw.util.viewModelProviderFactoryOf
@@ -77,6 +77,7 @@ fun HomeContent(
             }
         }
     ) {
+
         Column(
             modifier = Modifier
                 .systemBarsPadding()
@@ -96,6 +97,12 @@ fun HomeContent(
                 onCategorySelected = onCategorySelected,
             )
             */
+
+            PositionInfo(navController = navController)
+
+
+
+
             CategoryReminder(
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
@@ -103,6 +110,40 @@ fun HomeContent(
             )
         }
     }
+}
+
+@Composable
+private fun PositionInfo(
+    navController: NavController
+){
+    val latlng = navController
+        .currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<LatLng>("location_data")
+        ?.value
+
+    Spacer(modifier = Modifier.height(20.dp))
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (latlng == null) {
+            Button(
+                onClick = { navController.navigate("map") },
+                modifier = Modifier.height(55.dp)
+            ) {
+                Text(text = "Virtual Location")
+            }
+        }
+        else {
+            Text(
+                text = "Lat: ${latlng.latitude}, \nLng: ${latlng.longitude}"
+            )
+        }
+    }
+
+    Spacer(modifier = Modifier.height(20.dp))
 }
 
 @Composable

@@ -34,7 +34,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.lorenzo.mobilecomputinghw.BuildConfig
 import java.text.SimpleDateFormat
 import java.util.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.navigation.NavController
 import com.google.android.gms.maps.model.LatLng
 
@@ -121,7 +120,7 @@ fun Reminder(
                     enabled = true,
                     onClick = {clickToShowPermission = "T"},
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth().height(55.dp),
                     contentPadding = PaddingValues(
                         start = 20.dp,
                         top = 12.dp,
@@ -136,11 +135,11 @@ fun Reminder(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 if (latlng == null) {
-                    OutlinedButton(
+                    Button(
                         onClick = { navController.navigate("map") },
                         modifier = Modifier.height(55.dp)
                     ) {
-                        Text(text = "Payment location")
+                        Text(text = "Reminder Location")
                     }
                 } else {
                     Text(
@@ -150,24 +149,6 @@ fun Reminder(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-
-                OutlinedTextField(
-                    value = locationX.value,
-                    onValueChange = { locationX.value = it },
-                    label = { Text(text = "Location X")},
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                OutlinedTextField(
-                    value = locationY.value,
-                    onValueChange = { locationY.value = it },
-                    label = { Text(text = "Location Y")},
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "Notification: ",
@@ -258,8 +239,8 @@ fun Reminder(
                             viewModel.saveReminder(
                                 com.lorenzo.mobilecomputinghw.data.entity.Reminder(
                                     message = message.value,
-                                    location_x = locationX.value,
-                                    location_y = locationY.value,
+                                    location_x = (latlng?.latitude ?: 0.0),
+                                    location_y = (latlng?.longitude ?: 0.0),
                                     reminder_time = (((reminderHours.value.toLong()*60)+reminderMinutes.value.toLong())*60+reminderSeconds.value.toLong()).toString(),
                                     creation_time = Date().time.toString(),
                                     creator_id = 0,
@@ -271,7 +252,7 @@ fun Reminder(
                         onBackPress()
                     },
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth().height(55.dp),
                     contentPadding = PaddingValues(
                         start = 20.dp,
                         top = 12.dp,
@@ -398,7 +379,8 @@ fun PhotoSelector() {
                     start = 20.dp,
                     top = 12.dp,
                     end = 20.dp,
-                    bottom = 12.dp)
+                    bottom = 12.dp),
+                modifier =  Modifier.height(55.dp)
             ) {
                 Text("Open Gallery")
             }

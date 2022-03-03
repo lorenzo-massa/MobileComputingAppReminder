@@ -75,7 +75,8 @@ fun MobileComputingApp(
             val id = backStackEntry.arguments?.getLong("id")
             EditReminder(
                 onBackPress = appState::navigateBack,
-                reminderId = id ?: 0
+                reminderId = id ?: 0,
+                navController = appState.navController
             )
         }
     }

@@ -8,13 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
@@ -25,12 +19,15 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.systemBarsPadding
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.google.android.gms.maps.model.LatLng
 import com.lorenzo.mobilecomputinghw.util.viewModelProviderFactoryOf
 
 @Composable
 fun EditReminder(
     onBackPress: () -> Unit,
-    reminderId: Long
+    reminderId: Long,
+    navController: NavController
 ) {
     val viewModel: EditReminderViewModel = viewModel(
         key = "reminder_id_$reminderId",
@@ -44,17 +41,24 @@ fun EditReminder(
     val message = rememberSaveable { mutableStateOf("") }
     message.value = appMessage
 
-    val appLocationX = viewState.reminder?.location_x ?: ""
-    val locationX = rememberSaveable { mutableStateOf("") }
-    locationX.value = appLocationX
+    var appLocationX: Double = (viewState.reminder?.location_x ?: 0.0)
+    var appLocationY: Double = (viewState.reminder?.location_y ?: 0.0)
 
-    val appLocationY = viewState.reminder?.location_y ?: ""
-    val locationY = rememberSaveable { mutableStateOf("") }
-    locationY.value = appLocationY
+    val latlng = navController
+        .currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<LatLng>("location_data")
+        ?.value
 
-    val appReminderTime = viewState.reminder?.reminder_time ?: ""
+    if(latlng != null){
+        appLocationX = latlng.latitude
+        appLocationY = latlng.longitude
+    }
+
+
+    /*val appReminderTime = viewState.reminder?.reminder_time ?: ""
     val reminderTime = rememberSaveable { mutableStateOf("") }
-    reminderTime.value = appReminderTime
+    reminderTime.value = appReminderTime*/
 
 
     Surface {
@@ -88,30 +92,27 @@ fun EditReminder(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                OutlinedTextField(
-                    value = locationX.value,
-                    onValueChange = { locationX.value = it },
-                    label = { Text(text = "Location X")},
-                    modifier = Modifier.fillMaxWidth()
-                )
+                if (appLocationX == 0.0 && appLocationY == 0.0) {
+                    OutlinedButton(
+                        onClick = { navController.navigate("map") },
+                        modifier = Modifier.height(55.dp)
+                    ) {
+                        Text(text = "Payment location")
+                    }
+                } else {
+                    Text(
+                        text = "Lat: $appLocationX, \nLng: $appLocationY"
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                OutlinedTextField(
-                    value = locationY.value,
-                    onValueChange = { locationY.value = it },
-                    label = { Text(text = "Location Y")},
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                OutlinedTextField(
+                /*OutlinedTextField(
                     value = reminderTime.value,
                     onValueChange = { reminderTime.value = it },
                     label = { Text(text = "Reminder Time")},
                     modifier = Modifier.fillMaxWidth()
-                )
+                )*/
 
                 /*Image(
                     painter = rememberImagePainter(
@@ -134,9 +135,9 @@ fun EditReminder(
                                 com.lorenzo.mobilecomputinghw.data.entity.Reminder(
                                     reminderId = reminderId,
                                     message = message.value,
-                                    location_x = locationX.value,
-                                    location_y = locationY.value,
-                                    reminder_time = reminderTime.value,
+                                    location_x = appLocationX,
+                                    location_y = appLocationY,
+                                    reminder_time = viewState.reminder?.reminder_time ?: "",
                                     creation_time = viewState.reminder?.creation_time ?: "",
                                     creator_id = viewState.reminder?.creator_id ?: 0,
                                     reminder_seen = viewState.reminder?.reminder_seen ?: 0,
