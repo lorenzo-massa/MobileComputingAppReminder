@@ -27,17 +27,22 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.google.android.gms.maps.model.LatLng
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.R
 import kotlinx.coroutines.launch
+import java.lang.Math.sqrt
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.abs
+import kotlin.math.pow
 
 @Composable
 fun CategoryReminder(
     viewModel: HomeViewModel,
     modifier: Modifier = Modifier,
     navController: NavController,
+    latlng: LatLng?
 ) {
     val viewState by viewModel.state.collectAsState()
 
@@ -45,7 +50,8 @@ fun CategoryReminder(
         ReminderList(
             list = viewState.reminders,
             viewmodel = viewModel,
-            navController = navController
+            navController = navController,
+            latlng = latlng
         )
     }
 }
@@ -55,13 +61,14 @@ private fun ReminderList(
     list: List<Reminder>,
     viewmodel: HomeViewModel,
     navController: NavController,
+    latlng: LatLng?
 ) {
     LazyColumn(
         contentPadding = PaddingValues(0.dp),
         verticalArrangement = Arrangement.Center
     ) {
         items(list) { item ->
-            if(item.reminder_seen.toInt() == 1){
+            if(item.reminder_seen.toInt() == 1 && positionIsNear(item,latlng)){
                 ReminderListItem(
                     reminder = item,
                     viewModel = viewmodel,
@@ -72,6 +79,16 @@ private fun ReminderList(
             }
         }
     }
+}
+
+private fun positionIsNear(r: Reminder, latlng: LatLng?): Boolean {
+    val x = ((latlng?.latitude ?: r.location_x) - r.location_x).pow(2)
+    val y = ((latlng?.longitude ?: r.location_y) - r.location_y).pow(2)
+    val distance = kotlin.math.sqrt(x + y)
+
+    if(r.location_x == 0.0 && r.location_y == 0.0)
+        return true
+    return distance < 0.05
 }
 
 
@@ -136,30 +153,13 @@ private fun ReminderListItem(
             }
         )
 
-        // category
-        /*
-        Text(
-            text = category.name,
-            maxLines = 1,
-            style = MaterialTheme.typography.subtitle2,
-            modifier = Modifier.constrainAs(paymentCategory) {
-                linkTo(
-                    start = parent.start,
-                    end = icon.start,
-                    startMargin = 24.dp,
-                    endMargin = 8.dp,
-                    bias = 0f // float this towards the start. this was is the fix we needed
-                )
-                top.linkTo(paymentTitle.bottom, margin = 6.dp)
-                bottom.linkTo(parent.bottom, 10.dp)
-                width = Dimension.preferredWrapContent
-            }
-        )
-        */
-        // date
+        val t: String = if(reminder.reminder_time == "0")
+            ""
+        else
+            "Time: " +reminder.reminder_time
 
         Text(
-            text = "Time: " +reminder.reminder_time,
+            text = t,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.caption,
@@ -176,8 +176,14 @@ private fun ReminderListItem(
                 bottom.linkTo(parent.bottom, 10.dp)
             }
         )
+
+        val x: String = if(reminder.location_x == 0.0)
+            ""
+        else
+            "X: ${"%.4f".format(reminder.location_x)}"
+
         Text(
-            text = "X: " +reminder.location_x,
+            text = x,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.caption,
@@ -185,7 +191,7 @@ private fun ReminderListItem(
                 linkTo(
                     start = date.start,
                     end = iconEdit.start,
-                    startMargin = 100.dp,
+                    startMargin = 80.dp,
                     endMargin = 24.dp,
                     bias = 0f // float this towards the start. this was is the fix we needed
                 )
@@ -194,8 +200,14 @@ private fun ReminderListItem(
                 bottom.linkTo(parent.bottom, 10.dp)
             }
         )
+
+        val y: String = if(reminder.location_y == 0.0)
+            ""
+        else
+            "Y: ${"%.4f".format(reminder.location_y)}"
+
         Text(
-            text = "Y: " +reminder.location_y,
+            text = y,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.caption,
@@ -203,7 +215,7 @@ private fun ReminderListItem(
                 linkTo(
                     start = locationX.start,
                     end = iconEdit.start,
-                    startMargin = 50.dp,
+                    startMargin = 80.dp,
                     endMargin = 24.dp,
                     bias = 0f // float this towards the start. this was is the fix we needed
                 )

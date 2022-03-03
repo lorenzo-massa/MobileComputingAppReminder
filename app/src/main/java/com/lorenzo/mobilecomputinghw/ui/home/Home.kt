@@ -85,28 +85,25 @@ fun HomeContent(
         ) {
             val appBarColor = MaterialTheme.colors.secondary.copy(alpha = 0.87f)
 
+            val latlng = navController
+                .currentBackStackEntry
+                ?.savedStateHandle
+                ?.getLiveData<LatLng>("location_data")
+                ?.value
+
             HomeAppBar(
                 backgroundColor = appBarColor,
                 navController = navController,
                 user = user
             )
 
-            /*CategoryTabs(
-                categories = categories,
-                selectedCategory = selectedCategory,
-                onCategorySelected = onCategorySelected,
-            )
-            */
-
-            PositionInfo(navController = navController)
-
-
-
+            PositionInfo(navController = navController, latlng = latlng)
 
             CategoryReminder(
                 viewModel = viewModel,
                 modifier = Modifier.fillMaxSize(),
-                navController = navController
+                navController = navController,
+                latlng = latlng
             )
         }
     }
@@ -114,14 +111,9 @@ fun HomeContent(
 
 @Composable
 private fun PositionInfo(
-    navController: NavController
+    navController: NavController,
+    latlng: LatLng?
 ){
-    val latlng = navController
-        .currentBackStackEntry
-        ?.savedStateHandle
-        ?.getLiveData<LatLng>("location_data")
-        ?.value
-
     Spacer(modifier = Modifier.height(20.dp))
 
     Column(
@@ -137,9 +129,22 @@ private fun PositionInfo(
             }
         }
         else {
-            Text(
-                text = "Lat: ${latlng.latitude}, \nLng: ${latlng.longitude}"
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text(
+
+                    text = "Lat: ${"%.4f".format(latlng.latitude)}\nLng: ${"%.4f".format(latlng.longitude)}"
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Button(
+                    onClick = { navController.navigate("map") },
+                    modifier = Modifier.height(35.dp)
+                ) {
+                    Text(text = "Change")
+                }
+            }
+
         }
     }
 
@@ -212,62 +217,3 @@ private fun HomeAppBar(
         }
     )
 }
-
-
-/*
-@Composable
-private fun CategoryTabs(
-    categories: List<Category>,
-    selectedCategory: Category,
-    onCategorySelected: (Category) -> Unit
-) {
-    val selectedIndex = categories.indexOfFirst { it == selectedCategory }
-    ScrollableTabRow(
-        selectedTabIndex = selectedIndex,
-        edgePadding = 24.dp,
-        indicator = emptyTabIndicator,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        categories.forEachIndexed { index, category ->
-            Tab(
-                selected = index == selectedIndex,
-                onClick = { onCategorySelected(category) }
-            ) {
-                ChoiceChipContent(
-                    text = category.name,
-                    selected = index == selectedIndex,
-                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 16.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ChoiceChipContent(
-    text: String,
-    selected: Boolean,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        color = when {
-            selected -> MaterialTheme.colors.secondary.copy(alpha = 0.87f)
-            else -> MaterialTheme.colors.onSurface.copy(alpha = 0.12f)
-        },
-        contentColor = when {
-            selected -> Color.White
-            else -> MaterialTheme.colors.onSurface
-        },
-        shape = MaterialTheme.shapes.small,
-        modifier = modifier
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.body2,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-    }
-}
-
-private val emptyTabIndicator: @Composable (List<TabPosition>) -> Unit = {}
- */

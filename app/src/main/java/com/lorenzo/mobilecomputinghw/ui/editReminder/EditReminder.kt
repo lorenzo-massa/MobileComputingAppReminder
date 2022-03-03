@@ -1,13 +1,6 @@
 package com.lorenzo.mobilecomputinghw.ui.editReminder
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -92,40 +85,39 @@ fun EditReminder(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                if (appLocationX == 0.0 && appLocationY == 0.0) {
-                    OutlinedButton(
-                        onClick = { navController.navigate("map") },
-                        modifier = Modifier.height(55.dp)
-                    ) {
-                        Text(text = "Payment location")
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (appLocationX == 0.0 && appLocationY == 0.0) {
+                        Button(
+                            onClick = { navController.navigate("map") },
+                            modifier = Modifier.height(35.dp)
+                        ) {
+                            Text(text = "Edit Location")
+                        }
                     }
-                } else {
-                    Text(
-                        text = "Lat: $appLocationX, \nLng: $appLocationY"
-                    )
+                    else {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ){
+                            Text(
+                                text = "Lat: ${"%.4f".format(appLocationX)}\nLng: ${"%.4f".format(appLocationY)}"
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Button(
+                                onClick = { navController.navigate("map") },
+                                modifier = Modifier.height(35.dp)
+                            ) {
+                                Text(text = "Change")
+                            }
+                        }
+
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(100.dp))
 
-                /*OutlinedTextField(
-                    value = reminderTime.value,
-                    onValueChange = { reminderTime.value = it },
-                    label = { Text(text = "Reminder Time")},
-                    modifier = Modifier.fillMaxWidth()
-                )*/
-
-                /*Image(
-                    painter = rememberImagePainter(
-                        data = viewState.reminder?.img_uri ?: ""
-                    ),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .size(64.dp)
-                )*/
-
-                Spacer(modifier = Modifier.height(50.dp))
 
                 Button(
                     enabled = true,

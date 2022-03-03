@@ -99,7 +99,7 @@ fun Reminder(
                     label = { Text(text = "Reminder message")},
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 //Speech To Text ----------------------------------------
 
@@ -132,22 +132,40 @@ fun Reminder(
                 }
                 //------------------------------------------------
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-                if (latlng == null) {
-                    Button(
-                        onClick = { navController.navigate("map") },
-                        modifier = Modifier.height(55.dp)
-                    ) {
-                        Text(text = "Reminder Location")
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (latlng == null) {
+                        Button(
+                            onClick = { navController.navigate("map") },
+                            modifier = Modifier.height(35.dp)
+                        ) {
+                            Text(text = "Reminder Location")
+                        }
                     }
-                } else {
-                    Text(
-                        text = "Lat: ${latlng.latitude}, \nLng: ${latlng.longitude}"
-                    )
+                    else {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ){
+                            Text(
+                                text = "Lat: ${"%.4f".format(latlng.latitude)}\nLng: ${"%.4f".format(latlng.longitude)}"
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Button(
+                                onClick = { navController.navigate("map") },
+                                modifier = Modifier.height(35.dp)
+                            ) {
+                                Text(text = "Change")
+                            }
+                        }
+
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
@@ -165,6 +183,7 @@ fun Reminder(
                     )
                 }
 
+                Spacer(modifier = Modifier.height(10.dp))
 
                 if (checkedStateNotification.value){
                     Row(
@@ -181,7 +200,7 @@ fun Reminder(
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             )
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(20.dp))
                         Column(
                             modifier = Modifier.fillMaxWidth(0.5f)
                         ) {
@@ -192,7 +211,7 @@ fun Reminder(
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             )
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(20.dp))
                         Column(
                             //modifier = Modifier.fillMaxWidth(0.3f)
                         ) {
@@ -208,13 +227,13 @@ fun Reminder(
                 }
 
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 val uri = imageUriState.value
 
                 PhotoSelector()
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
                     enabled = true,
@@ -252,12 +271,7 @@ fun Reminder(
                         onBackPress()
                     },
                     modifier = Modifier
-                        .fillMaxWidth().height(55.dp),
-                    contentPadding = PaddingValues(
-                        start = 20.dp,
-                        top = 12.dp,
-                        end = 20.dp,
-                        bottom = 12.dp)
+                        .fillMaxWidth().height(55.dp)
                 ) {
                     Text("Save reminder")
                 }
@@ -375,12 +389,7 @@ fun PhotoSelector() {
 
             Button(
                 onClick = { selectImageLauncher.launch("image/*") },
-                contentPadding = PaddingValues(
-                    start = 20.dp,
-                    top = 12.dp,
-                    end = 20.dp,
-                    bottom = 12.dp),
-                modifier =  Modifier.height(55.dp)
+                modifier =  Modifier.height(35.dp)
             ) {
                 Text("Open Gallery")
             }
