@@ -3,12 +3,15 @@ package com.lorenzo.mobilecomputinghw.ui.reminder
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -46,6 +49,9 @@ fun Reminder(
     viewModel: ReminderViewModel = viewModel(),
     navController: NavController
 ) {
+
+    val context = LocalContext.current
+
     //val viewState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val message = rememberSaveable { mutableStateOf("") }
@@ -62,7 +68,7 @@ fun Reminder(
 
     var clickToShowPermission by rememberSaveable { mutableStateOf("F") }
 
-    val context = LocalContext.current
+
 
     val latlng = navController
         .currentBackStackEntry

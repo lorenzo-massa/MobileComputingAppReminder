@@ -1,6 +1,11 @@
 package com.lorenzo.mobilecomputinghw.ui.home
 
+import android.content.Context
 import android.net.Uri
+import android.os.Build
+import android.speech.tts.TextToSpeech
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,12 +19,14 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -31,10 +38,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.lorenzo.mobilecomputinghw.data.entity.Reminder
 import com.lorenzo.mobilecomputinghw.R
 import kotlinx.coroutines.launch
-import java.lang.Math.sqrt
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.math.abs
 import kotlin.math.pow
 
 @Composable
@@ -63,6 +66,20 @@ private fun ReminderList(
     navController: NavController,
     latlng: LatLng?
 ) {
+    val context = LocalContext.current
+    val textToSpeechEngine: TextToSpeech by lazy {
+        // Pass in context and the listener.
+        TextToSpeech(
+            context
+        ) { status ->
+            // set our locale only if init was success.
+            if (status == TextToSpeech.SUCCESS) {
+                //textToSpeechEngine.language = Locale.UK
+                Log.d("TTS", "Text to Speech ... Success")
+            }
+        }
+    }
+
     LazyColumn(
         contentPadding = PaddingValues(0.dp),
         verticalArrangement = Arrangement.Center
@@ -75,6 +92,7 @@ private fun ReminderList(
                     onClick = {},
                     modifier = Modifier.fillParentMaxWidth(),
                     navController = navController,
+                    textToSpeechEngine = textToSpeechEngine
                 )
             }
         }
@@ -99,11 +117,10 @@ private fun ReminderListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavController,
+    textToSpeechEngine: TextToSpeech
 ) {
     ConstraintLayout(modifier = modifier.clickable { onClick() }) {
-        val (divider, reminderImage, remainderMessage, locationX, locationY, iconEdit, iconDelete, date) = createRefs()
-
-        val viewState by viewModel.state.collectAsState()
+        val (divider, reminderImage, remainderMessage, locationX, locationY, iconEdit, iconDelete, iconTTS, date) = createRefs()
 
         Divider(
             Modifier.constrainAs(divider) {
@@ -114,6 +131,7 @@ private fun ReminderListItem(
         )
 
         val coroutineScope = rememberCoroutineScope()
+        val context = LocalContext.current
 
         Image(painter = rememberImagePainter(Uri.parse(reminder.img_uri)),
             contentDescription = null,
@@ -122,16 +140,16 @@ private fun ReminderListItem(
                 .size(50.dp)
                 .fillMaxSize()
                 .constrainAs(reminderImage) {
-                linkTo(
-                    start = parent.start,
-                    end = remainderMessage.start,
-                    startMargin = 10.dp,
-                    endMargin = 10.dp,
-                    bias = 0f // float this towards the start. this was is the fix we needed
-                )
-                top.linkTo(parent.top, margin = 10.dp)
-                width = Dimension.preferredWrapContent
-            })
+                    linkTo(
+                        start = parent.start,
+                        end = remainderMessage.start,
+                        startMargin = 10.dp,
+                        endMargin = 10.dp,
+                        bias = 0f // float this towards the start. this was is the fix we needed
+                    )
+                    top.linkTo(parent.top, margin = 10.dp)
+                    width = Dimension.preferredWrapContent
+                })
 
         // message
         Text(
@@ -225,6 +243,26 @@ private fun ReminderListItem(
             }
         )
 
+        // Icon TTS
+        IconButton(
+            onClick = {
+                tts(text = reminder.message, textToSpeechEngine = textToSpeechEngine, context = context)
+            },
+            modifier = Modifier
+                .size(50.dp)
+                .padding(6.dp)
+                .constrainAs(iconTTS) {
+                    top.linkTo(parent.top, 10.dp)
+                    bottom.linkTo(parent.bottom, 10.dp)
+                    end.linkTo(iconEdit.start, 5.dp)
+                }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.RecordVoiceOver,
+                contentDescription = stringResource(R.string.listen)
+            )
+        }
+
         // Icon edit
         IconButton(
             onClick = {
@@ -271,10 +309,20 @@ private fun ReminderListItem(
     }
 }
 
-private fun Date.formatToString(): String {
-    return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(this)
-}
+private fun tts(text: String, textToSpeechEngine: TextToSpeech, context: Context) {
+    // Get the text to be converted to speech from our EditText.
 
-private fun Long.toDateString(): String {
-    return SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(Date(this))
+    // Check if user hasn't input any text.
+    if (text.isNotEmpty()) {
+        // Lollipop and above requires an additional ID to be passed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // Call Lollipop+ function
+            textToSpeechEngine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "tts1")
+        } else {
+            // Call Legacy function
+            textToSpeechEngine.speak(text, TextToSpeech.QUEUE_FLUSH, null)
+        }
+    } else {
+        Toast.makeText(context, "Text cannot be empty", Toast.LENGTH_LONG).show()
+    }
 }
